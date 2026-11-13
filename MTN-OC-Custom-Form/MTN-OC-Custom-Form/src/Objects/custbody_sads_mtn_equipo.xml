@@ -1,0 +1,24 @@
+<transactionbodycustomfield scriptid="custbody_sads_mtn_equipo">
+    <bodypurchase>T</bodypurchase>
+    <description>Equipo de transporte de la Orden de compra de mantenimiento. Filtrado por la subsidiaria de la transacción.</description>
+    <displaytype>NORMAL</displaytype>
+    <fieldtype>SELECT</fieldtype>
+    <help>Seleccione el equipo de transporte. Los artículos disponibles en la columna Artículo del equipo dependen de este valor.</help>
+    <ismandatory>F</ismandatory>
+    <label>Equipo de transporte</label>
+    <selectrecordtype>[scriptid=customrecord_sads_mtn_equipo]</selectrecordtype>
+    <showinlist>T</showinlist>
+    <storevalue>T</storevalue>
+    <customfieldfilters>
+        <customfieldfilter>
+            <fldcomparefield>STDBODYSUBSIDIARY</fldcomparefield>
+            <fldfilter>[scriptid=customrecord_sads_mtn_equipo.custrecord_sads_mtn_eq_subsidiaria]</fldfilter>
+            <fldfilterchecked></fldfilterchecked>
+            <fldfiltercomparetype>EQ</fldfiltercomparetype>
+            <fldfilternotnull>F</fldfilternotnull>
+            <fldfilternull>F</fldfilternull>
+            <fldfiltersel></fldfiltersel>
+            <fldfilterval></fldfilterval>
+        </customfieldfilter>
+    </customfieldfilters>
+</transactionbodycustomfield>

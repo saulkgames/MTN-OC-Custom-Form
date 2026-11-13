@@ -1,0 +1,26 @@
+<usereventscript scriptid="customscript_sads_mtn_ue_oc">
+    <description>Filtra los artículos de la Orden de compra por el equipo de transporte de la cabecera. beforeLoad agrega la columna auxiliar y bloquea el artículo nativo en el formulario exclusivo; beforeSubmit valida en todos los contextos.</description>
+    <isinactive>F</isinactive>
+    <name>SADS MTN Equipo en Orden de compra (UE)</name>
+    <notifyowner>T</notifyowner>
+    <scriptfile>[/SuiteScripts/mtto_equipo/ue_sads_mtn_oc.js]</scriptfile>
+    <scriptcustomfields>
+        <scriptcustomfield scriptid="custscript_sads_mtn_form_id">
+            <description>ID interno del formulario exclusivo de OC de mantenimiento en este ambiente.</description>
+            <fieldtype>INTEGER</fieldtype>
+            <help>Capture el ID interno del formulario personalizado de OC de mantenimiento. Vacío: la columna auxiliar no se agrega.</help>
+            <ismandatory>F</ismandatory>
+            <label>ID del formulario exclusivo</label>
+        </scriptcustomfield>
+    </scriptcustomfields>
+    <scriptdeployments>
+        <scriptdeployment scriptid="customdeploy_sads_mtn_ue_oc">
+            <allroles>T</allroles>
+            <isdeployed>T</isdeployed>
+            <loglevel>ERROR</loglevel>
+            <recordtype>PURCHASEORDER</recordtype>
+            <status>TESTING</status>
+            <title>SADS MTN Equipo en Orden de compra</title>
+        </scriptdeployment>
+    </scriptdeployments>
+</usereventscript>

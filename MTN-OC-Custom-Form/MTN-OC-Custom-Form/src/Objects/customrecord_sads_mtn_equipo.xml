@@ -1,0 +1,32 @@
+<customrecordtype scriptid="customrecord_sads_mtn_equipo">
+    <accesstype>USEPERMISSIONLIST</accesstype>
+    <description>Equipo de transporte con su búsqueda guardada de artículos de mantenimiento y su subsidiaria. Lo usa el filtrado de artículos en Órdenes de compra.</description>
+    <enablesystemnotes>T</enablesystemnotes>
+    <includename>T</includename>
+    <isinactive>F</isinactive>
+    <recordname>Equipo de transporte</recordname>
+    <showid>T</showid>
+    <customrecordcustomfields>
+        <customrecordcustomfield scriptid="custrecord_sads_mtn_eq_busqueda">
+            <description>ID de script de la búsqueda guardada de artículos del equipo (customsearch_sads_mtn_...). No es el ID interno numérico.</description>
+            <displaytype>NORMAL</displaytype>
+            <fieldtype>TEXT</fieldtype>
+            <help>Capture el ID de script de la búsqueda guardada de artículos de este equipo, por ejemplo customsearch_sads_mtn_unidad01.</help>
+            <ismandatory>T</ismandatory>
+            <label>Búsqueda guardada</label>
+            <showinlist>T</showinlist>
+            <storevalue>T</storevalue>
+        </customrecordcustomfield>
+        <customrecordcustomfield scriptid="custrecord_sads_mtn_eq_subsidiaria">
+            <description>Subsidiaria a la que pertenece el equipo.</description>
+            <displaytype>NORMAL</displaytype>
+            <fieldtype>SELECT</fieldtype>
+            <help>Subsidiaria del equipo. Debe coincidir con la subsidiaria de la Orden de compra.</help>
+            <ismandatory>T</ismandatory>
+            <label>Subsidiaria</label>
+            <selectrecordtype>-117</selectrecordtype>
+            <showinlist>T</showinlist>
+            <storevalue>T</storevalue>
+        </customrecordcustomfield>
+    </customrecordcustomfields>
+</customrecordtype>
