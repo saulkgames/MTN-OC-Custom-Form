@@ -5,8 +5,8 @@
  *
  * User Event de Orden de compra (IDs en lib/config.js).
  * beforeLoad: en el formulario exclusivo agrega el selector "Artículo del equipo" y el botón "Agregar artículo"
- *             en la pestaña Artículos, llena el selector si el equipo ya se conoce, bloquea el artículo nativo
- *             y adjunta el Client Script.
+ *             en la pestaña Artículos, llena el selector si el equipo ya se conoce y bloquea el artículo nativo.
+ *             El Client Script corre por su propio despliegue (IDS.DEPLOY_CS), no se adjunta aquí.
  * beforeSubmit: garantiza, en todos los contextos, que una OC con equipo solo tenga artículos de su listado.
  * Sin estado a nivel de módulo.
  */
@@ -92,6 +92,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 ETIQUETAS.LBL_BTN_AGREGAR + '</button>';
 
             // 6. D-N: si el equipo ya se conoce (edición, copia o recarga por proveedor), llenar el selector en servidor.
+            //    La falla se registra con nivel Error para que se vea con la bitácora del despliegue en Error.
             selector.addSelectOption({ value: SELECTOR.VALOR_VACIO, text: ' ' });
             const idEquipoCargado = reglas.aTextoId(contexto.newRecord.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
             if (idEquipoCargado) {
@@ -102,10 +103,17 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                     seleccion.articulos.forEach((articulo) => {
                         selector.addSelectOption({ value: articulo.id, text: articulo.etiqueta });
                     });
-                } else {
                     log.audit({
+                        title: 'Selector llenado en servidor',
+                        details: 'Equipo: ' + idEquipoCargado + ' | Artículos: ' + seleccion.articulos.length
+                    });
+                } else {
+                    log.error({
                         title: 'Selector sin artículos: ' + seleccion.codigo,
-                        details: 'Equipo: ' + idEquipoCargado + ' | Detalle: ' + (seleccion.detalle || '')
+                        details: 'Equipo: ' + idEquipoCargado +
+                            ' | Búsqueda: ' + ((seleccion.equipo && seleccion.equipo.idBusqueda) || '(sin leer)') +
+                            ' | Usuario: ' + runtime.getCurrentUser().id + ' | Rol: ' + runtime.getCurrentUser().role +
+                            ' | Detalle: ' + (seleccion.detalle || '')
                     });
                 }
             }
@@ -121,10 +129,6 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             } catch (e) {
                 log.audit({ title: 'Artículo nativo no bloqueado', details: (e && e.message) || String(e) });
             }
-
-            // 8. Adjuntar el Client Script.
-            formulario.clientScriptModulePath = RUTAS.ARCHIVO_CS;
-            log.audit({ title: 'Client Script adjuntado', details: RUTAS.ARCHIVO_CS });
         }
 
         // ================================================================ beforeSubmit

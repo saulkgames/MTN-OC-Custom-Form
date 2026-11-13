@@ -3,8 +3,8 @@
  * @NScriptType ClientScript
  * @NModuleScope SameAccount
  *
- * Client Script del formulario exclusivo de OC de mantenimiento.
- * No tiene registro de despliegue propio: lo adjunta ue_sads_mtn_oc.js con clientScriptModulePath.
+ * Client Script de Orden de compra con despliegue propio (IDS.SCRIPT_CS / IDS.DEPLOY_CS).
+ * Se carga en todos los formularios de OC, pero solo actúa donde existe el selector, es decir, en el formulario exclusivo.
  * Llena el selector "Artículo del equipo", atiende el botón "Agregar artículo" y valida en pantalla.
  * La garantía está en beforeSubmit del User Event.
  * No manipula el DOM; usa la API de registro actual y los diálogos nativos alert/confirm (confirmación síncrona en validateField).
@@ -32,7 +32,7 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
     };
 
     // Distingue "módulo no cargado" de "módulo cargado pero sin puntos de entrada invocados".
-    diagnostico('módulo cargado', { archivo: RUTAS.ARCHIVO_CS });
+    diagnostico('módulo cargado', { archivo: RUTAS.MODULO_CS });
 
     // ================================================================ pageInit
 
@@ -66,7 +66,7 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
         // Con equipo: cargar sus artículos y llenar el selector (el servidor ya lo llenó; esto lo sincroniza con el estado).
         if (!reglas.esVacio(estado.idEquipo)) {
             cargarSeleccion(registro, estado.idEquipo);
-            poblarSelector(registro);
+            poblarSelector(registro, estado.articulos);
         }
     }
 
@@ -223,12 +223,23 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
      */
     function agregarArticuloSeleccionado() {
         const registro = currentRecord.get();
-        if (reglas.esVacio(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }))) {
+        const idEquipo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
+        if (!idEquipo) {
             window.alert(MENSAJES.MSG_01);
             return;
         }
+
+        // Sin artículo elegido: cargar los artículos del equipo en el selector (respaldo si fieldChanged no corrió).
         const idArticulo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_SEL_ARTICULO }));
         if (!idArticulo) {
+            const seleccion = datos.prepararSeleccion(idEquipo);
+            if (!seleccion.exito) {
+                diagnostico('carga de artículos desde el botón: falla', { equipo: idEquipo, codigo: seleccion.codigo, detalle: seleccion.detalle });
+                const nombreEquipo = (seleccion.equipo && seleccion.equipo.nombre) || registro.getText({ fieldId: IDS.FLD_BODY_EQUIPO }) || idEquipo;
+                window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: nombreEquipo }));
+                return;
+            }
+            poblarSelector(registro, seleccion.articulos);
             window.alert(MENSAJES.MSG_09);
             return;
         }
@@ -285,7 +296,7 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
         } else {
             cargarSeleccion(registro, idNuevo);
         }
-        poblarSelector(registro);
+        poblarSelector(registro, estado.articulos);
         estado.reinicioPorSubsidiaria = false;
     }
 
@@ -311,8 +322,8 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
         window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: estado.nombreEquipo }));
     }
 
-    /** Reemplaza las opciones del selector con la opción vacía y los artículos del estado. */
-    function poblarSelector(registro) {
+    /** Reemplaza las opciones del selector con la opción vacía y los artículos recibidos. */
+    function poblarSelector(registro, articulos) {
         const campo = registro.getField({ fieldId: IDS.FLD_SEL_ARTICULO });
         if (!campo) {
             diagnostico('selector no disponible', {});
@@ -320,18 +331,23 @@ define(['N/currentRecord', './lib/config', './lib/reglas', './lib/datos'], (curr
         }
         campo.removeSelectOption({ value: null });
         campo.insertSelectOption({ value: SELECTOR.VALOR_VACIO, text: ' ' });
-        estado.articulos.forEach((articulo) => {
+        articulos.forEach((articulo) => {
             campo.insertSelectOption({ value: articulo.id, text: articulo.etiqueta });
         });
-        diagnostico('selector llenado', { opciones: estado.articulos.length });
+        diagnostico('selector llenado', { opciones: articulos.length });
     }
 
     /**
-     * Envuelve un punto de entrada: registra su entrada y cualquier error en la consola, y vuelve a lanzar el error
-     * para que NetSuite se comporte igual que sin la envoltura.
+     * Envuelve un punto de entrada:
+     * - En formularios sin el selector (otros formularios de OC) no hace nada y devuelve true.
+     * - En el formulario exclusivo registra la entrada y cualquier error en la consola, y vuelve a lanzar el error
+     *   para que NetSuite se comporte igual que sin la envoltura.
      */
     function protegido(nombre, puntoDeEntrada) {
         return function (contexto) {
+            if (contexto && contexto.currentRecord && !contexto.currentRecord.getField({ fieldId: IDS.FLD_SEL_ARTICULO })) {
+                return true;
+            }
             diagnostico('entrada ' + nombre, contexto ? { modo: contexto.mode, campo: contexto.fieldId, sublista: contexto.sublistId } : {});
             try {
                 return puntoDeEntrada(contexto);

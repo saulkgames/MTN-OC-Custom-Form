@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.3, 2026-11-13 |
+| Versión | 1.4, 2026-11-13 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
-| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md` y `..._v8.md` (vigente) |
+| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md` y `..._v9.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
 | Estado del despliegue al instalar | Pruebas |
 
@@ -22,8 +22,8 @@ Un equipo nuevo se da de alta sin cambios de código: un registro Equipo y una b
 
 | Archivo | Tipo | Responsabilidad |
 |---|---|---|
-| `ue_sads_mtn_oc.js` | User Event, único `scriptfile` | `beforeLoad`: en el formulario exclusivo agrega el selector y el botón en la pestaña Artículos, llena el selector si el equipo ya se conoce, bloquea el artículo nativo y adjunta el Client Script (8 pasos numerados). `beforeSubmit`: rechaza el cambio de equipo en edición en línea y valida equipo, subsidiaria y artículos (11 pasos numerados). Es la garantía |
-| `cs_sads_mtn_oc.js` | Client Script, sin registro propio | Carga los artículos del equipo y llena el selector, atiende el botón "Agregar artículo", confirma y reinicia líneas al cambiar el equipo, limpia el equipo si cambia la subsidiaria, valida la línea y el guardado, y registra cada evento en la consola |
+| `ue_sads_mtn_oc.js` | User Event (`customscript_sads_mtn_ue_oc`) | `beforeLoad`: en el formulario exclusivo agrega el selector y el botón en la pestaña Artículos, llena el selector si el equipo ya se conoce y bloquea el artículo nativo (7 pasos numerados). `beforeSubmit`: rechaza el cambio de equipo en edición en línea y valida equipo, subsidiaria y artículos (11 pasos numerados). Es la garantía |
+| `cs_sads_mtn_oc.js` | Client Script (`customscript_sads_mtn_cs_oc`), con despliegue propio en Orden de compra | Solo actúa en formularios que tienen el selector. Carga los artículos del equipo y llena el selector, atiende el botón "Agregar artículo", confirma y reinicia líneas al cambiar el equipo, limpia el equipo si cambia la subsidiaria, valida la línea y el guardado, y registra cada evento en la consola |
 | `lib/reglas.js` | Reglas puras, sin módulos `N/` | RN-02, RN-03, RN-04, RN-05, RN-08, RN-10 |
 | `lib/datos.js` | Acceso a datos con `N/search` | Lee el registro Equipo y la búsqueda guardada; arma la lista de artículos (UC-01) |
 | `lib/config.js` | Configuración, sin módulos `N/` | IDs, etiquetas, rutas, límite de filas, mensajes MSG-01 a MSG-09 y códigos `MTTO_*` |
@@ -45,6 +45,8 @@ Flujo al guardar: User Event → reglas y `datos.prepararSeleccion` → `N/searc
 | Campo de cabecera | `custbody_sads_mtn_equipo` | Lista/registro Equipo; aplica a compras; no obligatorio a nivel de campo; filtrado por subsidiaria de la transacción |
 | Script | `customscript_sads_mtn_ue_oc` | User Event; parámetro `custscript_sads_mtn_form_id` (entero, sin valor) |
 | Despliegue | `customdeploy_sads_mtn_ue_oc` | Orden de compra; Pruebas; bitácora Error; audiencia todos los roles |
+| Script de cliente | `customscript_sads_mtn_cs_oc` | Client Script; archivo `cs_sads_mtn_oc.js` |
+| Despliegue de cliente | `customdeploy_sads_mtn_cs_oc` | Orden de compra; Pruebas; bitácora Error; audiencia todos los roles |
 
 ### 2.3 Campos de página (los agrega `beforeLoad`; no se almacenan)
 
@@ -86,13 +88,13 @@ Si un ID estándar difiere, se corrige solo en `lib/config.js`.
 |---|---|---|---|
 | 0 | Sandbox | Inventario de la sección 3 | Sin riesgo Alto |
 | 1 | Local | Autenticar y validar contra el sandbox (comandos abajo) | Validación sin errores |
-| 2 | Sandbox | Desplegar el proyecto | Registro, campos, script y despliegue en estado Pruebas |
+| 2 | Sandbox | Desplegar el proyecto | Registro, campos, los dos scripts y sus despliegues en estado Pruebas |
 | 3 | Sandbox | Crear el formulario exclusivo y ocultar `custbody_sads_mtn_equipo` en los demás formularios de compra (secciones 5.1 y 5.2) | — |
 | 4 | Sandbox | Capturar el ID interno del formulario exclusivo (`FORM_ID_SANDBOX`) en `custscript_sads_mtn_form_id` del despliegue | El selector y el botón aparecen en la pestaña Artículos |
 | 5 | Sandbox | Crear dos búsquedas piloto (sección 5.3) y dos registros Equipo (sección 5.4) | — |
 | 6 | Sandbox | Asignar permisos (sección 5.5) | — |
 | 7 | Sandbox | Bitácora del despliegue en Auditoría; ejecutar las pruebas de la sección 6 | POC-1 a POC-3 aprobadas; si alguna falla, la solución no avanza |
-| 8 | Sandbox | Despliegue a Liberado; prueba con usuarios de los roles de captura; bitácora de vuelta a Error | Sin incidencias |
+| 8 | Sandbox | Los dos despliegues a Liberado; prueba con usuarios de los roles de captura; bitácora de vuelta a Error | Sin incidencias |
 | 9 | Producción | Repetir pasos 0 a 6 con `FORM_ID_PRODUCCION`; alta de todos los equipos y búsquedas | — |
 | 10 | Producción | Piloto con usuarios reales y liberación general | Cero OC con equipo y artículos fuera de listado |
 
@@ -115,7 +117,8 @@ Revisiones después del paso 2:
 | Revisión | Dónde | Esperado |
 |---|---|---|
 | Filtrado de contexto | Despliegue `customdeploy_sads_mtn_ue_oc`, pestaña de contexto de ejecución | Todos los contextos marcados; el XML no los restringe |
-| Audiencia | Mismo despliegue, pestaña Audiencia | Todos los roles |
+| Audiencia | Despliegues `customdeploy_sads_mtn_ue_oc` y `customdeploy_sads_mtn_cs_oc`, pestaña Audiencia | Todos los roles |
+| Estado Pruebas | Ambos despliegues | En Pruebas solo corren para el propietario del script; probar con ese usuario hasta el paso 8 |
 | Filtro del campo de cabecera | `custbody_sads_mtn_equipo`, pestaña Sourcing & Filtering | Subsidiaria del equipo igual a la subsidiaria de la transacción. Si SDF no lo aplicó, configurarlo a mano |
 | Aplicación del campo de cabecera | `custbody_sads_mtn_equipo`, pestaña Aplica a | Compras; el campo puede verse en otras transacciones de compra y debe ocultarse en sus formularios |
 | Parámetro retirado | Script `customscript_sads_mtn_ue_oc`, pestaña Parámetros | `custscript_sads_mtn_item_temporal` ya no se usa. Si SDF no lo borró, se puede borrar a mano; sin uso no tiene efecto |
@@ -169,6 +172,17 @@ El nombre para mostrar debe ser único por convención interna; no se valida (ri
 | Roles de captura (`ROLES_CAPTURA`) | Orden de compra crear y editar; artículos ver; "Equipo de transporte" ver; audiencia de las búsquedas |
 | Rol de configuración (`ROL_ADMIN_CONFIG`) | "Equipo de transporte" crear y editar; crear búsquedas públicas |
 
+El selector se llena con el rol del usuario que abre la OC, en el servidor (`beforeLoad`) y en el cliente.
+Si falta un permiso, el selector queda vacío; el registro de ejecución del User Event muestra el error "Selector sin artículos" con el usuario, el rol y el detalle de NetSuite.
+
+| Revisión | Dónde | Requisito |
+|---|---|---|
+| Acceso a la búsqueda | Búsqueda guardada del equipo, casilla Pública o pestaña Audiencia | Pública, o con los roles de captura en la audiencia |
+| Ejecución de la búsqueda | Búsqueda guardada, botón Ver resultados con el rol de captura | Devuelve los artículos esperados |
+| Registro Equipo | Rol de captura, pestaña Permisos > Registro personalizado | "Equipo de transporte" con nivel Ver o superior |
+| Artículos | Rol de captura, pestaña Permisos > Listas | Artículos con nivel Ver o superior |
+| Valor de la búsqueda en el equipo | Registro Equipo, campo Búsqueda guardada | ID de script (`customsearch_...`) o ID interno de la búsqueda; no su título |
+
 ### 5.6 Selector y botón "Agregar artículo"
 
 | Momento | Qué pasa |
@@ -176,10 +190,12 @@ El nombre para mostrar debe ser único por convención interna; no se valida (ri
 | Abrir la OC con equipo (edición, copia o recarga al elegir proveedor) | `beforeLoad` llena el selector en el servidor; el Client Script lo vuelve a llenar con el mismo resultado |
 | Elegir o cambiar el equipo | El Client Script confirma si hay líneas (RN-05), borra las líneas y vuelve a llenar el selector |
 | Elegir un artículo y pulsar "Agregar artículo" | Si se estaba editando una línea existente, se abre una línea nueva. El artículo se asigna a la línea en captura con sourcing de precio, descripción, unidad e impuesto. La línea queda sin confirmar y el selector se limpia |
+| Pulsar "Agregar artículo" sin artículo elegido | El botón carga los artículos del equipo en el selector y muestra MSG-09. Si la carga falla, muestra MSG-05 y la consola registra el código y el detalle |
 | Capturar cantidad y pulsar "Agregar" de la sublista | NetSuite confirma la línea; `validateLine` comprueba que el artículo pertenece al equipo |
 
 El botón no es un botón estándar de NetSuite: es un campo de HTML en línea que llama a `agregarArticuloSeleccionado` del Client Script.
 Funciona aunque NetSuite no haya ejecutado `pageInit`, porque lee el registro directamente.
+El Client Script se despliega en Orden de compra y se carga en todos sus formularios; solo actúa donde existe el selector.
 Elegir proveedor recarga la página completa en OneWorld; el selector se vuelve a llenar en la carga.
 
 ## 6. Pruebas en cuenta
@@ -209,7 +225,7 @@ Durante las pruebas, la bitácora del despliegue va en Auditoría y la consola F
 | SB-12 | RN-02 | Búsqueda con columna `MTTO_EXCLUIR` verdadera en un artículo | El artículo no aparece; opciones ordenadas por etiqueta |
 | SB-13 | RN-10 | CSV que limpia el equipo de una OC con línea recibida | Rechazo con MSG-07 |
 | SB-14 | RN-07 | Equipo con búsqueda de otro tipo o sin filas válidas | MSG-05 en pantalla; CSV rechazado con MSG-05 |
-| SB-15 | — | Pulsar el botón sin artículo elegido, o sin equipo | MSG-09, o MSG-01 |
+| SB-15 | — | Pulsar el botón sin artículo elegido, o sin equipo | Sin artículo: el selector se llena y aparece MSG-09. Sin equipo: MSG-01 |
 | SB-16 | — | Ubicación | Selector y botón en la misma fila, en la pestaña Artículos, encima de la sublista |
 | SB-17 | — | Elegir equipo y después proveedor (la página se recarga) | Después de la recarga el selector sigue lleno |
 
@@ -226,7 +242,8 @@ Si POC-1, POC-2 o POC-3 fallan, la solución no avanza a producción.
 | `MTTO_EQUIPO_NO_EDITABLE` | RN-10 y RN-11 | MSG-07 o MSG-08 | — |
 | — | Botón sin artículo elegido | MSG-09 | — |
 
-Mensajes de `beforeLoad` (nivel Auditoría): "Client Script adjuntado", "Selector no agregado en items", "Selector sin artículos", parámetro de formulario vacío, sublista no disponible, artículo nativo no bloqueado, búsqueda con 1,000 filas.
+Mensajes de `beforeLoad` en nivel Error (visibles con la bitácora en Error): "Selector sin artículos: <código>", con equipo, búsqueda, usuario, rol y detalle de NetSuite.
+Mensajes de `beforeLoad` en nivel Auditoría: "Selector llenado en servidor", "Selector no agregado en items", parámetro de formulario vacío, sublista no disponible, artículo nativo no bloqueado, búsqueda con 1,000 filas.
 
 ### 7.1 Diagnóstico en pantalla
 
@@ -237,10 +254,10 @@ Se apaga con `DIAGNOSTICO.ACTIVO = false` en `lib/config.js` y un nuevo desplieg
 
 | Mensaje | Significado | Acción |
 |---|---|---|
-| Ningún mensaje `[sads_mtn]` y la bitácora del UE dice "Client Script adjuntado" | El navegador no carga el módulo | F12 > Red: revisar que `cs_sads_mtn_oc.js` y `lib/` respondan 200 |
-| `módulo cargado` sin `entrada pageInit` | NetSuite no invoca los puntos de entrada | Revisar errores rojos sin filtro; el botón sigue funcionando porque no depende de `pageInit` |
+| Ningún mensaje `[sads_mtn]` | El navegador no carga el módulo, o el despliegue `customdeploy_sads_mtn_cs_oc` no corre para el usuario (estado Pruebas con otro usuario, o audiencia) | Revisar el despliegue de cliente; F12 > Red: `cs_sads_mtn_oc.js` y `lib/` con 200 |
+| `módulo cargado` sin `entrada pageInit` | NetSuite carga el módulo pero no invoca sus puntos de entrada | Revisar errores rojos sin filtro y el despliegue de cliente; el botón sigue funcionando porque no depende de `pageInit` |
 | `entrada <evento>` seguido de `error en <evento>` | El evento falla; el mensaje trae nombre, texto y pila | Corregir la línea indicada en la pila |
-| `carga de artículos: falla` | La búsqueda o el equipo fallan; también aparece MSG-05 | Revisar el registro Equipo y la búsqueda |
+| `carga de artículos: falla` o `carga de artículos desde el botón: falla` | La búsqueda o el equipo fallan; también aparece MSG-05. El detalle trae el error de NetSuite | Revisar permisos y el registro Equipo (sección 5.5) |
 | `selector llenado` con número de opciones | El selector se llenó desde el cliente | Ninguna |
 | `selector no disponible` | El campo del selector no existe en la página | Revisar la bitácora de `beforeLoad` |
 | Al pulsar el botón no aparece `entrada agregarArticuloSeleccionado` | El `require` del botón no encontró el módulo | Revisar `RUTAS.MODULO_CS` en `lib/config.js` contra la ruta real en el Gabinete de archivos |
@@ -261,7 +278,7 @@ Costos de referencia; validarlos contra la documentación vigente de Oracle.
 
 ## 9. Reversión
 
-Desmarcar el despliegue `customdeploy_sads_mtn_ue_oc` (o cambiar su estado).
+Desmarcar los despliegues `customdeploy_sads_mtn_ue_oc` y `customdeploy_sads_mtn_cs_oc` (o cambiar su estado).
 El formulario vuelve a comportamiento nativo, sin selector, botón ni bloqueo, y el guardado deja de validar.
 El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 
@@ -280,6 +297,7 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | D-N | `beforeLoad` llena el selector cuando el equipo ya se conoce (0 a 16 unidades; el prompt preveía 0) y el Client Script registra cada evento | Decisión del usuario: respaldo por si NetSuite no ejecuta los eventos del Client Script |
 | D-O | El botón es un campo de HTML en línea que llama al Client Script con `require` | `form.addButton` solo coloca botones en las barras superior e inferior. El patrón no está documentado por Oracle (regla 19.7 del prompt) |
 | D-P | Nuevo mensaje MSG-09: "Seleccione un artículo del equipo." | El botón necesita un aviso cuando no hay artículo elegido |
+| D-Q | El Client Script tiene registro y despliegue propios en Orden de compra (`customscript_sads_mtn_cs_oc`), en lugar de adjuntarse con `clientScriptModulePath` | En sandbox, NetSuite cargó el módulo adjuntado pero nunca invocó `pageInit` ni `fieldChanged`; S-05 resultó falso en esta cuenta |
 | C-02 | `prepararSeleccion` acepta bitácora opcional y equipo ya leído | Advertencia solo en servidor; evita una segunda lectura del equipo |
 | C-04 | MSG-05 con equipo inexistente muestra el ID (servidor) o el texto del campo (pantalla) | No hay nombre que mostrar |
 | C-05 | `inactivo` se lee y no se usa | Ninguna regla lo consume |
@@ -318,7 +336,11 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | R-12 | NetSuite puede rechazar campos de script en la pestaña estándar `items` | Supuesto S-18 | Selector y botón quedan en el área principal | Respaldo automático y registro en auditoría; SB-16 |
 | R-13 | El `require` del botón puede no resolver la ruta del módulo | Patrón no documentado por Oracle (D-O) | El botón no hace nada | El diagnóstico registra la entrada del botón; ajustar `RUTAS.MODULO_CS` |
 | R-14 | El artículo nativo bloqueado puede ignorar la asignación por script | Supuesto S-06 | La línea queda sin artículo | El botón comprueba la asignación y lo registra; POC-3 y POC-4 |
-| R-15 | NetSuite puede no invocar los eventos del Client Script | En sandbox, con la versión 1.2, la consola solo mostró `módulo cargado` | El selector no se actualiza al cambiar de equipo sin recarga; las validaciones de pantalla no corren | El llenado en servidor cubre la carga y la recarga; el servidor sigue validando; el diagnóstico lo confirma |
+| R-15 | Con el despliegue propio, NetSuite podría seguir sin invocar los eventos del Client Script | En sandbox, con `clientScriptModulePath`, la consola solo mostró `módulo cargado` (D-Q) | El selector no se actualiza al cambiar de equipo; las validaciones de pantalla no corren | El botón carga el selector si está vacío; el llenado en servidor cubre la carga y la recarga; el servidor sigue validando |
+| R-16 | El Client Script se carga en todos los formularios de OC | Un despliegue de cliente aplica al tipo de registro, no al formulario | Descarga del módulo en cada OC; sin consultas ni efectos fuera del formulario exclusivo | `protegido` sale si no existe el selector |
+| R-17 | En estado Pruebas, los scripts solo corren para el propietario | Comportamiento estándar de despliegues en Pruebas | Otros usuarios no ven el selector ni el botón funcional hasta pasar a Liberado | Probar con el propietario; liberar en el paso 8 |
+| R-18 | El objeto SDF `clientscript` no se validó contra el servidor | Red de desarrollo sin acceso a NetSuite | Error de esquema en el paso 1 | `project:validate --server` antes de desplegar |
+| R-19 | Permisos de búsqueda o de registro insuficientes para el rol que abre la OC | `search.load` y `lookupFields` corren con el rol del usuario | Selector vacío y MSG-05 | Registro en nivel Error con usuario, rol y detalle; sección 5.5 |
 
 ## 13. Supuestos y fuentes
 
@@ -327,7 +349,7 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | S-02 | Los artículos son de tipo Otro cargo para la compra | Contrato de búsqueda |
 | S-03 | Cada búsqueda devuelve pocas decenas de artículos | POC-1 |
 | S-04 | Costos de gobernanza de la sección 8 | Documentación vigente |
-| S-05 | El Client Script adjuntado por el User Event no requiere despliegue propio | POC-1 |
+| S-05 | El Client Script adjuntado por el User Event no requiere despliegue propio | Refutado en sandbox (2026-11-13): el módulo se cargó, pero sus eventos no se invocaron. Sustituido por D-Q |
 | S-06 | El campo nativo de artículo puede bloquearse en `beforeLoad` y asignarse por script | POC-3 y POC-4 |
 | S-09 | NetSuite impide eliminar líneas con recepción o factura | SB-07 |
 | S-10 | Sourcing & Filtering no limpia el equipo al cambiar la subsidiaria | SB-06 |

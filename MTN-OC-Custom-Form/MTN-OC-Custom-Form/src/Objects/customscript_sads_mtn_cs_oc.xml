@@ -1,0 +1,17 @@
+<clientscript scriptid="customscript_sads_mtn_cs_oc">
+    <description>Selector de artículos por equipo de transporte en la Orden de compra: llena el selector, atiende el botón "Agregar artículo" y valida en pantalla. Solo actúa en el formulario exclusivo (donde el User Event agrega el selector).</description>
+    <isinactive>F</isinactive>
+    <name>SADS MTN Equipo en Orden de compra (CS)</name>
+    <notifyowner>T</notifyowner>
+    <scriptfile>[/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js]</scriptfile>
+    <scriptdeployments>
+        <scriptdeployment scriptid="customdeploy_sads_mtn_cs_oc">
+            <allroles>T</allroles>
+            <isdeployed>T</isdeployed>
+            <loglevel>ERROR</loglevel>
+            <recordtype>PURCHASEORDER</recordtype>
+            <status>TESTING</status>
+            <title>SADS MTN Equipo en Orden de compra (CS)</title>
+        </scriptdeployment>
+    </scriptdeployments>
+</clientscript>

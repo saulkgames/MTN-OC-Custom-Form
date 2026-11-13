@@ -18,6 +18,8 @@ define([], () => {
         FLD_BTN_AGREGAR: 'custpage_sads_mtn_btn_agregar',
         SCRIPT_UE: 'customscript_sads_mtn_ue_oc',
         DEPLOY_UE: 'customdeploy_sads_mtn_ue_oc',
+        SCRIPT_CS: 'customscript_sads_mtn_cs_oc',
+        DEPLOY_CS: 'customdeploy_sads_mtn_cs_oc',
         PARAM_FORM: 'custscript_sads_mtn_form_id'
     });
 
@@ -54,11 +56,10 @@ define([], () => {
     });
 
     /**
-     * ARCHIVO_CS: ruta del Client Script relativa al User Event (clientScriptModulePath).
-     * MODULO_CS: ruta absoluta del mismo módulo para el require del botón "Agregar artículo".
+     * MODULO_CS: ruta absoluta del Client Script para el require del botón "Agregar artículo".
+     * El Client Script se ejecuta por su propio despliegue (DEPLOY_CS), no por clientScriptModulePath.
      */
     const RUTAS = Object.freeze({
-        ARCHIVO_CS: './cs_sads_mtn_oc.js',
         MODULO_CS: '/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js'
     });
 
