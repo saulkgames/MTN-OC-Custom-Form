@@ -17,13 +17,16 @@ define([], () => {
         FLD_COL_AUX: 'custpage_sads_mtn_articulo',
         SCRIPT_UE: 'customscript_sads_mtn_ue_oc',
         DEPLOY_UE: 'customdeploy_sads_mtn_ue_oc',
-        PARAM_FORM: 'custscript_sads_mtn_form_id'
+        PARAM_FORM: 'custscript_sads_mtn_form_id',
+        PARAM_ITEM_TEMPORAL: 'custscript_sads_mtn_item_temporal',
+        FLD_ITEM_TEMPORAL: 'custpage_sads_mtn_item_temporal'
     });
 
     /** IDs estándar de NetSuite usados por la solución. Supuesto S-11: verificar en el paso 0 del despliegue. */
     const ESTANDAR = Object.freeze({
         FLD_FORMULARIO: 'customform',
         FLD_SUBSIDIARIA: 'subsidiary',
+        FLD_PROVEEDOR: 'entity',
         SUBLISTA_ARTICULOS: 'item',
         COL_ARTICULO: 'item',
         COL_CLAVE_LINEA: 'lineuniquekey',
@@ -38,6 +41,7 @@ define([], () => {
         LBL_REC_EQUIPO: 'Equipo de transporte',
         LBL_EQUIPO: 'Equipo de transporte',
         LBL_COL_AUX: 'Artículo del equipo',
+        LBL_ITEM_TEMPORAL: 'Artículo de línea temporal',
         ETIQUETA_COL_EXCLUIR: 'MTTO_EXCLUIR'
     });
 
@@ -87,12 +91,6 @@ define([], () => {
         [CODIGOS.EQUIPO_NO_EDITABLE]: MENSAJES.MSG_07
     });
 
-    /** Códigos que indican un problema de configuración del equipo o de su búsqueda. */
-    const CODIGOS_DE_CONFIGURACION = Object.freeze([
-        CODIGOS.EQUIPO_NO_ENCONTRADO,
-        CODIGOS.BUSQUEDA_INVALIDA
-    ]);
-
     /**
      * Sustituye las llaves [nombre] de una plantilla con los datos recibidos.
      * Una llave sin dato se conserva tal cual.
@@ -118,7 +116,6 @@ define([], () => {
         MENSAJES,
         CODIGOS,
         MENSAJE_POR_CODIGO,
-        CODIGOS_DE_CONFIGURACION,
         formatearMensaje
     };
 });

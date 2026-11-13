@@ -12,6 +12,13 @@
             <ismandatory>F</ismandatory>
             <label>ID del formulario exclusivo</label>
         </scriptcustomfield>
+        <scriptcustomfield scriptid="custscript_sads_mtn_item_temporal">
+            <description>ID interno del artículo de línea temporal (Otro cargo para la compra, precio 0, fuera de todas las búsquedas de equipo).</description>
+            <fieldtype>INTEGER</fieldtype>
+            <help>Capture el ID interno del artículo de línea temporal. Vacío: no se inserta la línea temporal. La línea temporal nunca se guarda: la quitan el Client Script y el User Event.</help>
+            <ismandatory>F</ismandatory>
+            <label>ID del artículo de línea temporal</label>
+        </scriptcustomfield>
     </scriptcustomfields>
     <scriptdeployments>
         <scriptdeployment scriptid="customdeploy_sads_mtn_ue_oc">

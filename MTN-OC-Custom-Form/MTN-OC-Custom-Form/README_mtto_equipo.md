@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.1, 2026-11-13 |
+| Versión | 1.2, 2026-11-13 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
-| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; corrección en `..._v5.md` |
+| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; correcciones en `..._v5.md` y `..._v6.md` |
 | Tipo de proyecto | SDF, personalización de cuenta |
 | Estado del despliegue al instalar | Pruebas |
 
@@ -21,8 +21,10 @@ Un equipo nuevo se da de alta sin cambios de código: un registro Equipo y una b
 
 | Archivo | Tipo | Responsabilidad |
 |---|---|---|
-| `ue_sads_mtn_oc.js` | User Event, único `scriptfile` | `beforeLoad`: en el formulario exclusivo agrega la columna auxiliar, bloquea el artículo nativo y adjunta el Client Script. `beforeSubmit`: rechaza el cambio de equipo en edición en línea y valida equipo, subsidiaria y artículos. Es la garantía |
-| `cs_sads_mtn_oc.js` | Client Script, sin registro propio | Carga los artículos del equipo, confirma y reinicia líneas al cambiar el equipo, limpia el equipo si cambia la subsidiaria, llena las opciones de cada línea, asigna el artículo nativo y valida línea y guardado |
+| `ue_sads_mtn_oc.js` | User Event, único `scriptfile` | `beforeLoad`: en el formulario exclusivo agrega la columna auxiliar, bloquea el artículo nativo, publica el ID del artículo temporal en un campo oculto y adjunta el Client Script. `beforeSubmit`: rechaza el cambio de equipo en edición en línea, elimina líneas temporales y valida equipo, subsidiaria y artículos en 12 pasos numerados. Es la garantía |
+| `cs_sads_mtn_oc.js` | Client Script, sin registro propio | Carga los artículos del equipo, inserta la línea temporal, confirma y reinicia líneas al cambiar el equipo, limpia el equipo si cambia la subsidiaria, llena las opciones de cada línea, asigna el artículo nativo, valida la línea y, al guardar, quita la línea temporal y valida |
+
+En `ue_sads_mtn_oc.js` y `cs_sads_mtn_oc.js`, una función con una sola llamada no se declara: su código está escrito donde se usa (criterio D-G). Las funciones declaradas son puntos de entrada o tienen dos o más llamadas.
 | `lib/reglas.js` | Reglas puras, sin módulos `N/` | RN-02, RN-03, RN-04, RN-05, RN-08, RN-10 |
 | `lib/datos.js` | Acceso a datos con `N/search` | Lee el registro Equipo y la búsqueda guardada; arma la lista de artículos (UC-01) |
 | `lib/config.js` | Configuración, sin módulos `N/` | IDs, etiquetas, límite de filas, mensajes MSG-01 a MSG-08 y códigos `MTTO_*` |
@@ -38,7 +40,7 @@ Flujo al guardar: User Event → reglas y `datos.prepararSeleccion` → `N/searc
 | Campo del registro | `custrecord_sads_mtn_eq_busqueda` | Texto libre, obligatorio; ID de script de la búsqueda |
 | Campo del registro | `custrecord_sads_mtn_eq_subsidiaria` | Lista/registro Subsidiaria, obligatorio |
 | Campo de cabecera | `custbody_sads_mtn_equipo` | Lista/registro Equipo; aplica a compras; no obligatorio a nivel de campo; filtrado por subsidiaria de la transacción |
-| Script | `customscript_sads_mtn_ue_oc` | User Event; parámetro `custscript_sads_mtn_form_id` (entero, sin valor) |
+| Script | `customscript_sads_mtn_ue_oc` | User Event; parámetros `custscript_sads_mtn_form_id` y `custscript_sads_mtn_item_temporal` (enteros, sin valor) |
 | Despliegue | `customdeploy_sads_mtn_ue_oc` | Orden de compra; Pruebas; bitácora Error; audiencia todos los roles |
 
 ### 2.3 Objetos manuales
@@ -74,12 +76,12 @@ Si un ID estándar difiere, se corrige solo en `lib/config.js`.
 | 1 | Local | Autenticar y validar contra el sandbox (comandos abajo) | Validación sin errores |
 | 2 | Sandbox | Desplegar el proyecto | Registro, campos, script y despliegue en estado Pruebas |
 | 3 | Sandbox | Crear el formulario exclusivo y ocultar `custbody_sads_mtn_equipo` en los demás formularios de compra (sección 5.1 y 5.2) | — |
-| 4 | Sandbox | Capturar el ID interno del formulario exclusivo (`FORM_ID_SANDBOX`) en `custscript_sads_mtn_form_id` del despliegue | La columna "Artículo del equipo" aparece en el formulario |
+| 4 | Sandbox | Capturar el ID interno del formulario exclusivo (`FORM_ID_SANDBOX`) en `custscript_sads_mtn_form_id` del despliegue. Crear el artículo temporal (sección 5.6) y capturar su ID interno (`ITEM_TEMPORAL_SANDBOX`) en `custscript_sads_mtn_item_temporal` | La columna "Artículo del equipo" aparece en el formulario |
 | 5 | Sandbox | Crear dos búsquedas piloto (sección 5.3) y dos registros Equipo (sección 5.4) | — |
 | 6 | Sandbox | Asignar permisos (sección 5.5) | — |
 | 7 | Sandbox | Bitácora del despliegue en Auditoría; ejecutar POC-1 a POC-6 y SB-01 a SB-14 (sección 6) | POC-1, POC-2 y POC-3 aprobadas; si alguna falla, la solución no avanza |
 | 8 | Sandbox | Despliegue a Liberado; prueba con usuarios de los roles de captura; bitácora de vuelta a Error | Sin incidencias |
-| 9 | Producción | Repetir pasos 0 a 6 con `FORM_ID_PRODUCCION`; alta de todos los equipos y búsquedas | — |
+| 9 | Producción | Repetir pasos 0 a 6 con `FORM_ID_PRODUCCION` e `ITEM_TEMPORAL_PRODUCCION`; alta de todos los equipos y búsquedas | — |
 | 10 | Producción | Piloto con usuarios reales y liberación general | Cero OC con equipo y artículos fuera de listado |
 
 Comandos del paso 1 y 2, desde la carpeta del proyecto SDF:
@@ -153,6 +155,26 @@ El nombre para mostrar debe ser único por convención interna; no se valida (ri
 | Roles de captura (`ROLES_CAPTURA`) | Orden de compra crear y editar; artículos ver; "Equipo de transporte" ver; audiencia de las búsquedas |
 | Rol de configuración (`ROL_ADMIN_CONFIG`) | "Equipo de transporte" crear y editar; crear búsquedas públicas |
 
+### 5.6 Artículo de línea temporal
+
+En una OC nueva, NetSuite no entrega al Client Script el campo de la columna en una línea sin confirmar, y la lista sale vacía.
+La línea temporal es una línea confirmada con un artículo exclusivo; a través de ella se cargan las opciones de la línea en captura.
+Nunca se guarda: el Client Script la quita al guardar y el User Event elimina cualquier línea con ese artículo, en todos los contextos.
+No genera registro contable, recepción ni CFDI.
+
+| Requisito del artículo | Motivo |
+|---|---|
+| Tipo "Otro cargo para la compra" | Mismo tipo que los artículos de mantenimiento |
+| Nombre visible del tipo "NO USAR - LÍNEA TEMPORAL" | El usuario ve la línea en pantalla mientras captura |
+| Precio de compra 0 | Importe 0 mientras está en pantalla |
+| Disponible en todas las subsidiarias que usan el formulario | Debe poder confirmarse en cualquier OC de mantenimiento |
+| Código de impuesto que no bloquee la línea | `commitLine` falla si la línea queda incompleta |
+| Fuera de todas las búsquedas `customsearch_sads_mtn_<equipo>` | No debe aparecer como opción |
+| Su ID interno en `custscript_sads_mtn_item_temporal` | Vacío: la línea temporal queda apagada |
+
+Se inserta solo cuando hay proveedor, equipo cargado y cero líneas: al abrir la OC, al cambiar de equipo o después del sourcing del proveedor.
+Las columnas de línea que la cuenta haga obligatorias (departamento, clase, ubicación) deben poder llenarse por defecto; si no, NetSuite rechaza la línea y la consola lo registra.
+
 ## 6. Pruebas en cuenta
 
 No hay pruebas locales; todas se ejecutan en sandbox.
@@ -180,6 +202,9 @@ Durante las pruebas, la bitácora del despliegue va en Auditoría para ver adver
 | SB-12 | RN-02 | Búsqueda con columna `MTTO_EXCLUIR` verdadera en un artículo | El artículo no aparece; opciones ordenadas por etiqueta |
 | SB-13 | RN-10 | CSV que limpia el equipo de una OC con línea recibida | Rechazo con MSG-07 |
 | SB-14 | RN-07 | Equipo con búsqueda de otro tipo o sin filas válidas | MSG-05 en pantalla; CSV rechazado con MSG-05 |
+| SB-15 | — | OC nueva: elegir proveedor y equipo, con la consola F12 abierta | Aparece la línea temporal y la primera línea en captura tiene opciones. Consola: "línea temporal agregada" y "opciones insertadas" con estrategia "línea 0" |
+| SB-16 | RN-03 | Guardar una OC con líneas reales y la línea temporal | Se guarda sin la línea temporal; si aplica MSG-04, sus números corresponden a las líneas reales |
+| SB-17 | — | CSV con una línea del artículo temporal y líneas válidas | Se guarda sin la línea temporal; la bitácora de auditoría registra "Líneas temporales eliminadas" |
 
 Si POC-1, POC-2 o POC-3 fallan, la solución no avanza a producción.
 
@@ -218,7 +243,12 @@ Interpretación de los mensajes:
 | `módulo cargado` sin `pageInit` | NetSuite no invoca los puntos de entrada | Revisar errores rojos en la consola |
 | `carga de artículos: falla` | La búsqueda o el equipo fallan; también aparece MSG-05 | Revisar el registro Equipo y la búsqueda |
 | `campo auxiliar: línea actual falló` y luego `opciones insertadas` con estrategia `línea 0` | La estrategia alternativa funciona | Ninguna |
-| `campo auxiliar no disponible` | Ninguna estrategia obtiene el campo; ocurre en la primera línea de una OC nueva si NetSuite no entrega el campo de una línea sin confirmar | Reportar el mensaje completo; la alternativa es un campo de selección en cabecera |
+| `campo auxiliar no disponible` | Ninguna estrategia obtiene el campo; ocurre en la primera línea de una OC nueva si no hay línea temporal | Revisar que el artículo temporal esté configurado (sección 5.6) |
+| `línea temporal agregada` | La línea temporal quedó confirmada | Ninguna |
+| `línea temporal pendiente: falta proveedor` | Hay equipo, pero no proveedor | Elegir proveedor; la línea se inserta después del sourcing |
+| `línea temporal no agregada` o `no confirmada por NetSuite` | NetSuite rechazó la línea (columna obligatoria, impuesto, artículo no disponible para la subsidiaria) | Revisar el detalle del error y la configuración del artículo temporal |
+| `opciones insertadas` con estrategia `línea 0` después de `línea temporal agregada`, y la lista sigue vacía | Las opciones insertadas por una línea confirmada no llegan a la línea en captura | Reportar; la alternativa es un campo de selección en cabecera |
+| `línea temporal quitada al guardar` | `saveRecord` quitó la línea temporal | Ninguna |
 
 ## 8. Gobernanza
 
@@ -261,6 +291,12 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | I-08 | `manifest.xml` declara `CUSTOMRECORDS`, `SERVERSIDESCRIPTING`, `CLIENTSUITESCRIPT` y `SUBSIDIARIES` | Features que usan los objetos; confirmar con `project:validate --server` |
 | I-09 | El parámetro `cf` se usa siempre que el registro no traiga formulario (creación y copia) | El prompt lo indica para creación; la copia también es creación |
 | I-10 | El campo de la columna se obtiene con dos estrategias (línea actual y línea 0) y el Client Script escribe diagnóstico en la consola del navegador | En sandbox la columna salió sin opciones; `getSublistField` puede fallar en líneas nuevas sin confirmar |
+| D-G | En UE y CS, una función con una sola llamada se escribe donde se usa | Decisión del usuario: facilitar la auditoría |
+| D-H | Línea temporal con un artículo exclusivo, activada por `custscript_sads_mtn_item_temporal` | Decisión del usuario: dar a la columna una línea confirmada a través de la cual cargar opciones |
+| D-I | `beforeSubmit` elimina en todos los contextos las líneas con el artículo temporal antes de validar | Decisión del usuario: la línea temporal nunca se guarda |
+| D-J | Si al guardar solo existe la línea temporal, se quita y NetSuite rechaza la OC con su mensaje nativo | Decisión del usuario |
+| I-11 | Nuevo punto de entrada `postSourcing` del proveedor | NetSuite no admite líneas sin proveedor (supuesto); la línea temporal se inserta después del sourcing |
+| I-12 | Con solo la línea temporal, el cambio de equipo no pide confirmación (RN-05) | La línea temporal no es una línea capturada |
 
 ## 11. Valores pendientes
 
@@ -270,6 +306,8 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | `FORM_ID_PRODUCCION` | `custscript_sads_mtn_form_id` del despliegue en producción |
 | `ROLES_CAPTURA` | Sección 5.5 |
 | `ROL_ADMIN_CONFIG` | Sección 5.5 |
+| `ITEM_TEMPORAL_SANDBOX` | `custscript_sads_mtn_item_temporal` del despliegue en sandbox (sección 5.6) |
+| `ITEM_TEMPORAL_PRODUCCION` | `custscript_sads_mtn_item_temporal` del despliegue en producción (sección 5.6) |
 
 ## 12. Riesgos
 
@@ -282,7 +320,10 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | R-05 | El bloqueo del campo nativo o su asignación por script puede no funcionar | Supuesto S-06 | RN-12 no se cumple en pantalla | Bitácora; validación de servidor activa; POC-4 |
 | R-06 | `lineuniquekey` puede no estar disponible en cliente | Comportamiento de cliente no verificado | En edición, el Client Script valida todas las líneas y puede rechazar líneas originales que el servidor aceptaría | SB-11; el servidor sigue siendo la referencia |
 | R-07 | La primera línea de una OC nueva puede quedar sin opciones | Sin líneas confirmadas no hay línea 0 para la estrategia alternativa | El usuario no puede capturar la primera línea con la columna | Diagnóstico de la sección 7.1; alternativa: campo de selección en cabecera |
-| R-08 | La estrategia de línea 0 supone que las opciones de una línea confirmada afectan la línea en captura | Comportamiento no documentado por Oracle | Puede dejar de funcionar en una versión futura de NetSuite | Diagnóstico activo; repetir POC-1 en cada actualización mayor |
+| R-08 | La estrategia de línea 0 y la línea temporal suponen que las opciones insertadas por una línea confirmada llegan a la línea en captura | Comportamiento no documentado por Oracle | Si no llegan, la columna sigue vacía; también puede dejar de funcionar en una versión futura | SB-15; diagnóstico activo; repetir POC-1 en cada actualización mayor |
+| R-09 | `commitLine` de la línea temporal puede fallar | Columnas obligatorias de la cuenta, impuesto o proveedor sin capturar | No se inserta; la primera línea queda sin opciones | Sección 5.6; la consola registra el error |
+| R-10 | Si al guardar solo existe la línea temporal, se quita y NetSuite rechaza la OC | Decisión D-J | La siguiente línea puede quedar sin opciones hasta cambiar el equipo o recargar la página | Capacitación |
+| R-11 | El usuario ve la línea temporal y puede editarla o borrarla | Una línea de sublista no se puede ocultar | Si la borra sin líneas reales, ocurre lo mismo que en R-10; si cambia su artículo, deja de ser temporal y se valida como cualquier línea | Nombre "NO USAR - LÍNEA TEMPORAL"; capacitación |
 
 ## 13. Supuestos y fuentes
 

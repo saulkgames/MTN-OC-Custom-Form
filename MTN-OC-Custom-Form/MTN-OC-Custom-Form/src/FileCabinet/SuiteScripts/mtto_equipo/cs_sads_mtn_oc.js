@@ -27,150 +27,134 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         permitidos: new Map(),
         cargaValida: true,
         lineasOriginales: new Map(),
-        reinicioPorSubsidiaria: false
+        reinicioPorSubsidiaria: false,
+        idArticuloTemporal: '',
+        insertandoLineaTemporal: false
     };
 
     // Distingue "módulo no cargado" de "módulo cargado pero pageInit no ejecutado".
     diagnostico('módulo cargado', { archivo: RUTAS.ARCHIVO_CS });
 
-    // ---------------------------------------------------------------- pageInit
+    // ================================================================ pageInit
 
     function pageInit(contexto) {
         const registro = contexto.currentRecord;
         estado.modo = contexto.mode;
         estado.idEquipo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
         estado.idEquipoOriginal = esEdicion() ? estado.idEquipo : '';
-        diagnostico('pageInit', { modo: estado.modo, equipo: estado.idEquipo });
+        try {
+            // Campo oculto publicado por el UE solo si el parámetro del artículo temporal tiene valor.
+            estado.idArticuloTemporal = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_ITEM_TEMPORAL }));
+        } catch (e) {
+            estado.idArticuloTemporal = '';
+        }
+        diagnostico('pageInit', { modo: estado.modo, equipo: estado.idEquipo, articuloTemporal: estado.idArticuloTemporal });
 
+        // Edición: guardar las líneas originales y, si hay recibidas o facturadas, bloquear el equipo (RN-10).
         if (esEdicion()) {
-            guardarLineasOriginales(registro);
+            estado.lineasOriginales = new Map();
+            const total = registro.getLineCount({ sublistId: SUBLISTA });
+            for (let i = 0; i < total; i++) {
+                const clave = reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_CLAVE_LINEA, i));
+                estado.lineasOriginales.set(clave || ('#' + i), {
+                    clave,
+                    idArticulo: reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i)),
+                    cantidadRecibida: leerValorLinea(registro, ESTANDAR.COL_CANT_RECIBIDA, i),
+                    cantidadFacturada: leerValorLinea(registro, ESTANDAR.COL_CANT_FACTURADA, i)
+                });
+            }
             if (!reglas.equipoEditable(lineasOriginalesComoLista())) {
-                deshabilitarEquipo(registro);
+                const campoEquipo = registro.getField({ fieldId: IDS.FLD_BODY_EQUIPO });
+                if (campoEquipo) {
+                    campoEquipo.isDisabled = true;
+                }
             }
         }
+
         if (!reglas.esVacio(estado.idEquipo)) {
             cargarSeleccion(registro, estado.idEquipo);
+            asegurarLineaTemporal(registro);
         }
         poblarOpcionesLineaActual(registro);
     }
 
-    function guardarLineasOriginales(registro) {
-        estado.lineasOriginales = new Map();
-        const total = registro.getLineCount({ sublistId: SUBLISTA });
-        for (let i = 0; i < total; i++) {
-            const clave = reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_CLAVE_LINEA, i));
-            const linea = {
-                clave,
-                idArticulo: reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i)),
-                cantidadRecibida: leerValorLinea(registro, ESTANDAR.COL_CANT_RECIBIDA, i),
-                cantidadFacturada: leerValorLinea(registro, ESTANDAR.COL_CANT_FACTURADA, i)
-            };
-            estado.lineasOriginales.set(clave || ('#' + i), linea);
-        }
-    }
+    // ================================================================ validateField
 
-    function lineasOriginalesComoLista() {
-        return Array.from(estado.lineasOriginales.values());
-    }
-
-    /** RN-10 en pantalla. */
-    function deshabilitarEquipo(registro) {
-        const campo = registro.getField({ fieldId: IDS.FLD_BODY_EQUIPO });
-        if (campo) {
-            campo.isDisabled = true;
-        }
-    }
-
-    // ---------------------------------------------------------------- validateField
-
-    /** RN-05. Confirmación síncrona antes de cambiar el equipo si hay líneas. */
+    /** RN-05. Confirmación síncrona antes de cambiar el equipo si hay líneas reales. */
     function validateField(contexto) {
-        if (contexto.sublistId || contexto.fieldId !== IDS.FLD_BODY_EQUIPO) {
-            return true;
-        }
-        if (estado.reinicioPorSubsidiaria) {
+        if (contexto.sublistId || contexto.fieldId !== IDS.FLD_BODY_EQUIPO || estado.reinicioPorSubsidiaria) {
             return true;
         }
         const registro = contexto.currentRecord;
-        const idNuevo = registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO });
-        if (!reglas.equipoCambio(estado.idEquipo, idNuevo)) {
+        if (!reglas.equipoCambio(estado.idEquipo, registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }))) {
             return true;
         }
-        if (!reglas.requiereConfirmacion(registro.getLineCount({ sublistId: SUBLISTA }))) {
+        // La línea temporal no cuenta como línea capturada.
+        let lineasReales = 0;
+        const total = registro.getLineCount({ sublistId: SUBLISTA });
+        for (let i = 0; i < total; i++) {
+            if (!esLineaTemporal(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i))) {
+                lineasReales++;
+            }
+        }
+        if (!reglas.requiereConfirmacion(lineasReales)) {
             return true;
         }
         return window.confirm(MENSAJES.MSG_02);
     }
 
-    // ---------------------------------------------------------------- fieldChanged
+    // ================================================================ fieldChanged
 
     function fieldChanged(contexto) {
         const registro = contexto.currentRecord;
+
+        // Equipo: reinicio de líneas y opciones (RN-05).
         if (!contexto.sublistId && contexto.fieldId === IDS.FLD_BODY_EQUIPO) {
             alCambiarEquipo(registro);
-        } else if (!contexto.sublistId && contexto.fieldId === ESTANDAR.FLD_SUBSIDIARIA) {
-            alCambiarSubsidiaria(registro);
-        } else if (contexto.sublistId === SUBLISTA && contexto.fieldId === IDS.FLD_COL_AUX) {
-            alCambiarColumnaAuxiliar(registro);
-        }
-    }
-
-    /** RN-05 tras confirmar: elimina líneas y opciones, y carga las del nuevo equipo. */
-    function alCambiarEquipo(registro) {
-        const idNuevo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
-        if (!reglas.equipoCambio(estado.idEquipo, idNuevo)) {
-            estado.reinicioPorSubsidiaria = false;
             return;
         }
-        eliminarTodasLasLineas(registro);
-        limpiarOpcionesLineaActual(registro);
-        estado.idEquipo = idNuevo;
-        if (reglas.esVacio(idNuevo)) {
-            limpiarEstado();
-        } else {
-            cargarSeleccion(registro, idNuevo);
-        }
-        poblarOpcionesLineaActual(registro);
-        estado.reinicioPorSubsidiaria = false;
-    }
 
-    /** RN-09. Si el equipo no corresponde a la nueva subsidiaria, se limpia sin confirmación. */
-    function alCambiarSubsidiaria(registro) {
-        if (reglas.esVacio(estado.idEquipo) || !estado.equipo) {
-            return;
-        }
-        const idSubsidiaria = registro.getValue({ fieldId: ESTANDAR.FLD_SUBSIDIARIA });
-        if (reglas.esSubsidiariaCompatible(estado.equipo.idSubsidiaria, idSubsidiaria)) {
-            return;
-        }
-        window.alert(config.formatearMensaje(MENSAJES.MSG_06, { equipo: estado.nombreEquipo }));
-        estado.reinicioPorSubsidiaria = true;
-        registro.setValue({ fieldId: IDS.FLD_BODY_EQUIPO, value: '' });
-        if (estado.reinicioPorSubsidiaria) {
-            // fieldChanged del equipo no se disparó: se aplica el reinicio directamente.
-            alCambiarEquipo(registro);
-        }
-    }
-
-    /** Asigna el artículo nativo desde la columna auxiliar. */
-    function alCambiarColumnaAuxiliar(registro) {
-        const valor = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX }));
-        if (!valor) {
-            const actual = registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO });
-            if (!reglas.esVacio(actual)) {
-                registro.setCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, value: '' });
+        // Subsidiaria: si el equipo ya no le corresponde, se limpia sin confirmación (RN-09).
+        if (!contexto.sublistId && contexto.fieldId === ESTANDAR.FLD_SUBSIDIARIA) {
+            if (reglas.esVacio(estado.idEquipo) || !estado.equipo) {
+                return;
+            }
+            if (reglas.esSubsidiariaCompatible(estado.equipo.idSubsidiaria, registro.getValue({ fieldId: ESTANDAR.FLD_SUBSIDIARIA }))) {
+                return;
+            }
+            window.alert(config.formatearMensaje(MENSAJES.MSG_06, { equipo: estado.nombreEquipo }));
+            estado.reinicioPorSubsidiaria = true;
+            registro.setValue({ fieldId: IDS.FLD_BODY_EQUIPO, value: '' });
+            if (estado.reinicioPorSubsidiaria) {
+                // fieldChanged del equipo no se disparó: se aplica el reinicio directamente.
+                alCambiarEquipo(registro);
             }
             return;
         }
-        registro.setCurrentSublistValue({
-            sublistId: SUBLISTA,
-            fieldId: ESTANDAR.COL_ARTICULO,
-            value: valor,
-            forceSyncSourcing: true
-        });
+
+        // Columna auxiliar: asigna el artículo nativo con sourcing síncrono, o lo limpia.
+        if (contexto.sublistId === SUBLISTA && contexto.fieldId === IDS.FLD_COL_AUX) {
+            const valor = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX }));
+            if (valor) {
+                registro.setCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, value: valor, forceSyncSourcing: true });
+                return;
+            }
+            if (!reglas.esVacio(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO }))) {
+                registro.setCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, value: '' });
+            }
+        }
     }
 
-    // ---------------------------------------------------------------- lineInit
+    // ================================================================ postSourcing
+
+    /** Tras el sourcing del proveedor, inserta la línea temporal si ya hay equipo y no hay líneas. */
+    function postSourcing(contexto) {
+        if (!contexto.sublistId && contexto.fieldId === ESTANDAR.FLD_PROVEEDOR) {
+            asegurarLineaTemporal(contexto.currentRecord);
+        }
+    }
+
+    // ================================================================ lineInit
 
     /** Opciones de la línea desde el estado de la página; nunca ejecuta la búsqueda. */
     function lineInit(contexto) {
@@ -179,13 +163,19 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         }
     }
 
-    // ---------------------------------------------------------------- validateLine
+    // ================================================================ validateLine
 
     function validateLine(contexto) {
         if (contexto.sublistId !== SUBLISTA) {
             return true;
         }
         const registro = contexto.currentRecord;
+        const idArticulo = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO }));
+
+        // D-H: la línea temporal se acepta sin validar; se quita al guardar.
+        if (estado.insertandoLineaTemporal || esLineaTemporal(idArticulo)) {
+            return true;
+        }
         if (reglas.esVacio(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }))) {
             window.alert(MENSAJES.MSG_01);
             return false;
@@ -194,11 +184,16 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
             window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: estado.nombreEquipo }));
             return false;
         }
-        const idArticulo = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO }));
+
+        // RN-04: en edición sin cambio de equipo, una línea original con su mismo artículo se acepta.
         const clave = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_CLAVE_LINEA }));
-        if (esLineaOriginalSinCambio(registro, clave, idArticulo)) {
+        const original = esEdicion() && clave ? estado.lineasOriginales.get(clave) : null;
+        if (original && original.idArticulo === idArticulo &&
+            !reglas.equipoCambio(estado.idEquipoOriginal, registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }))) {
             return true;
         }
+
+        // RN-03.
         if (reglas.perteneceAlListado(estado.permitidos, idArticulo)) {
             return true;
         }
@@ -207,48 +202,67 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         return false;
     }
 
-    function esLineaOriginalSinCambio(registro, clave, idArticulo) {
-        if (!esEdicion() || !clave || !estado.lineasOriginales.has(clave)) {
-            return false;
-        }
-        const idEquipoActual = registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO });
-        if (reglas.equipoCambio(estado.idEquipoOriginal, idEquipoActual)) {
-            return false;
-        }
-        return estado.lineasOriginales.get(clave).idArticulo === idArticulo;
-    }
+    // ================================================================ saveRecord
 
-    // ---------------------------------------------------------------- saveRecord
-
-    /** Replica el orden de validación del servidor para mostrar el mismo mensaje antes de enviar. */
+    /** Quita la línea temporal y replica el orden de validación del servidor. */
     function saveRecord(contexto) {
         const registro = contexto.currentRecord;
+
+        // 1. D-H: quitar las líneas temporales. Si no quedan líneas reales, NetSuite rechaza con su mensaje nativo (D-J).
+        for (let i = registro.getLineCount({ sublistId: SUBLISTA }) - 1; i >= 0; i--) {
+            if (esLineaTemporal(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i))) {
+                registro.removeLine({ sublistId: SUBLISTA, line: i });
+                diagnostico('línea temporal quitada al guardar', { linea: i });
+            }
+        }
+
+        // 2. RN-06: equipo obligatorio en el formulario exclusivo.
         const idEquipo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
         if (!idEquipo) {
             window.alert(MENSAJES.MSG_01);
             return false;
         }
+
+        // 3. RN-07: equipo existente.
         if (!estado.equipo) {
             window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: estado.nombreEquipo || idEquipo }));
             return false;
         }
+
+        // 4. RN-08.
         if (!reglas.esSubsidiariaCompatible(estado.equipo.idSubsidiaria, registro.getValue({ fieldId: ESTANDAR.FLD_SUBSIDIARIA }))) {
             window.alert(config.formatearMensaje(MENSAJES.MSG_06, { equipo: estado.nombreEquipo }));
             return false;
         }
+
+        // 5. RN-04: líneas a validar, numeradas desde 1 sin la línea temporal.
+        const lineasActuales = [];
+        for (let i = 0; i < registro.getLineCount({ sublistId: SUBLISTA }); i++) {
+            const idArticulo = reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i));
+            lineasActuales.push({
+                clave: reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_CLAVE_LINEA, i)),
+                numero: i + 1,
+                idArticulo,
+                textoArticulo: registro.getSublistText({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, line: i }) || idArticulo
+            });
+        }
         const aValidar = reglas.lineasAValidar({
             esCreacion: !esEdicion(),
             equipoCambio: reglas.equipoCambio(estado.idEquipoOriginal, idEquipo),
-            lineasActuales: leerLineasActuales(registro),
+            lineasActuales,
             lineasOriginales: lineasOriginalesComoLista()
         });
         if (!aValidar.length) {
             return true;
         }
+
+        // 6. RN-07: búsqueda válida.
         if (!estado.cargaValida) {
             window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: estado.nombreEquipo }));
             return false;
         }
+
+        // 7. RN-03.
         const fuera = reglas.lineasFueraDeListado(estado.permitidos, aValidar);
         if (fuera.length) {
             window.alert(config.formatearMensaje(MENSAJES.MSG_04, {
@@ -260,10 +274,39 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         return true;
     }
 
-    // ---------------------------------------------------------------- apoyo
+    // ================================================================ funciones con dos o más llamadas
 
-    function esEdicion() {
-        return estado.modo === 'edit';
+    /** RN-05 tras confirmar: elimina líneas y opciones, carga las del nuevo equipo e inserta la línea temporal. */
+    function alCambiarEquipo(registro) {
+        const idNuevo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
+        if (!reglas.equipoCambio(estado.idEquipo, idNuevo)) {
+            estado.reinicioPorSubsidiaria = false;
+            return;
+        }
+
+        // Eliminar la línea en captura y todas las confirmadas, de la última a la primera (incluye la temporal).
+        try {
+            registro.cancelLine({ sublistId: SUBLISTA });
+        } catch (e) {
+            // Sin línea en captura.
+        }
+        for (let i = registro.getLineCount({ sublistId: SUBLISTA }) - 1; i >= 0; i--) {
+            registro.removeLine({ sublistId: SUBLISTA, line: i });
+        }
+
+        estado.idEquipo = idNuevo;
+        if (reglas.esVacio(idNuevo)) {
+            estado.equipo = null;
+            estado.nombreEquipo = '';
+            estado.articulos = [];
+            estado.permitidos = new Map();
+            estado.cargaValida = true;
+        } else {
+            cargarSeleccion(registro, idNuevo);
+            asegurarLineaTemporal(registro);
+        }
+        poblarOpcionesLineaActual(registro);
+        estado.reinicioPorSubsidiaria = false;
     }
 
     /** UC-01: carga el equipo y sus artículos en el estado de la página. */
@@ -288,34 +331,57 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         window.alert(config.formatearMensaje(MENSAJES.MSG_05, { equipo: estado.nombreEquipo }));
     }
 
-    function limpiarEstado() {
-        estado.equipo = null;
-        estado.nombreEquipo = '';
-        estado.articulos = [];
-        estado.permitidos = new Map();
-        estado.cargaValida = true;
-    }
-
-    /** Elimina la línea en captura y todas las líneas confirmadas, de la última a la primera. */
-    function eliminarTodasLasLineas(registro) {
-        try {
-            registro.cancelLine({ sublistId: SUBLISTA });
-        } catch (e) {
-            // Sin línea en captura.
+    /**
+     * D-H. Inserta una línea confirmada con el artículo temporal, para que la columna auxiliar
+     * pueda cargarse a través de una línea existente. Se quita en saveRecord y en el servidor.
+     * Requiere: ID temporal, equipo cargado con éxito, proveedor y cero líneas.
+     */
+    function asegurarLineaTemporal(registro) {
+        if (!estado.idArticuloTemporal || reglas.esVacio(estado.idEquipo) || !estado.cargaValida) {
+            return;
         }
-        for (let i = registro.getLineCount({ sublistId: SUBLISTA }) - 1; i >= 0; i--) {
-            registro.removeLine({ sublistId: SUBLISTA, line: i });
+        if (registro.getLineCount({ sublistId: SUBLISTA }) > 0) {
+            return;
+        }
+        if (reglas.esVacio(registro.getValue({ fieldId: ESTANDAR.FLD_PROVEEDOR }))) {
+            diagnostico('línea temporal pendiente: falta proveedor', {});
+            return;
+        }
+        estado.insertandoLineaTemporal = true;
+        try {
+            registro.selectNewLine({ sublistId: SUBLISTA });
+            registro.setCurrentSublistValue({
+                sublistId: SUBLISTA,
+                fieldId: ESTANDAR.COL_ARTICULO,
+                value: estado.idArticuloTemporal,
+                forceSyncSourcing: true
+            });
+            registro.commitLine({ sublistId: SUBLISTA });
+            if (registro.getLineCount({ sublistId: SUBLISTA }) > 0) {
+                diagnostico('línea temporal agregada', { articulo: estado.idArticuloTemporal });
+            } else {
+                diagnostico('línea temporal no confirmada por NetSuite', { articulo: estado.idArticuloTemporal });
+                registro.cancelLine({ sublistId: SUBLISTA });
+            }
+        } catch (e) {
+            diagnostico('línea temporal no agregada', describirError(e));
+            try {
+                registro.cancelLine({ sublistId: SUBLISTA });
+            } catch (ignorado) {
+                // Sin línea en captura.
+            }
+        } finally {
+            estado.insertandoLineaTemporal = false;
         }
     }
 
     /**
-     * Obtiene el campo de la columna auxiliar para la línea en captura.
-     * En Client Scripts, getSublistField puede fallar en una línea nueva sin confirmar (SSS_INVALID_SUBLIST_OPERATION).
-     * Estrategias en orden: (1) línea actual; (2) línea 0, si hay líneas confirmadas.
-     * Cada intento fallido queda en la consola.
-     * @returns {{campo: Object, estrategia: string}|null}
+     * Opción vacía más los artículos del estado en la columna auxiliar de la línea en captura,
+     * y preselección del artículo nativo sin disparar fieldChanged.
      */
-    function obtenerCampoAuxiliar(registro) {
+    function poblarOpcionesLineaActual(registro) {
+        // 1. Obtener el campo: primero la línea actual; si falla, la línea 0.
+        //    getSublistField puede fallar en una línea nueva sin confirmar (SSS_INVALID_SUBLIST_OPERATION).
         const total = registro.getLineCount({ sublistId: SUBLISTA });
         let indiceActual = null;
         try {
@@ -323,44 +389,34 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         } catch (e) {
             diagnostico('campo auxiliar: índice actual no disponible', describirError(e));
         }
-        const estrategias = [];
+        const intentos = [];
         if (indiceActual !== null && indiceActual !== undefined) {
-            estrategias.push({ nombre: 'línea actual', linea: indiceActual });
+            intentos.push({ estrategia: 'línea actual', linea: indiceActual });
         }
         if (total > 0 && indiceActual !== 0) {
-            estrategias.push({ nombre: 'línea 0', linea: 0 });
+            intentos.push({ estrategia: 'línea 0', linea: 0 });
         }
-        for (let i = 0; i < estrategias.length; i++) {
-            const estrategia = estrategias[i];
-            const contexto = { linea: estrategia.linea, indiceActual, total };
+        let campo = null;
+        let estrategiaUsada = '';
+        for (let i = 0; i < intentos.length && !campo; i++) {
+            const datosIntento = { linea: intentos[i].linea, indiceActual, total };
             try {
-                const campo = registro.getSublistField({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX, line: estrategia.linea });
+                campo = registro.getSublistField({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX, line: intentos[i].linea });
                 if (campo) {
-                    return { campo, estrategia: estrategia.nombre };
+                    estrategiaUsada = intentos[i].estrategia;
+                } else {
+                    diagnostico('campo auxiliar: ' + intentos[i].estrategia + ' devolvió nulo', datosIntento);
                 }
-                diagnostico('campo auxiliar: ' + estrategia.nombre + ' devolvió nulo', contexto);
             } catch (e) {
-                diagnostico('campo auxiliar: ' + estrategia.nombre + ' falló', Object.assign(contexto, describirError(e)));
+                diagnostico('campo auxiliar: ' + intentos[i].estrategia + ' falló', Object.assign(datosIntento, describirError(e)));
             }
         }
-        diagnostico('campo auxiliar no disponible', { indiceActual, total });
-        return null;
-    }
-
-    function limpiarOpcionesLineaActual(registro) {
-        const obtenido = obtenerCampoAuxiliar(registro);
-        if (obtenido) {
-            obtenido.campo.removeSelectOption({ value: null });
-        }
-    }
-
-    /** Opción vacía más los artículos del estado; preselecciona el artículo nativo sin disparar fieldChanged. */
-    function poblarOpcionesLineaActual(registro) {
-        const obtenido = obtenerCampoAuxiliar(registro);
-        if (!obtenido) {
+        if (!campo) {
+            diagnostico('campo auxiliar no disponible', { indiceActual, total });
             return;
         }
-        const campo = obtenido.campo;
+
+        // 2. Reemplazar las opciones.
         campo.removeSelectOption({ value: null });
         try {
             campo.insertSelectOption({ value: VALOR_OPCION_VACIA, text: ' ' });
@@ -370,31 +426,25 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         estado.articulos.forEach((articulo) => {
             campo.insertSelectOption({ value: articulo.id, text: articulo.etiqueta });
         });
-        diagnostico('opciones insertadas', { estrategia: obtenido.estrategia, opciones: estado.articulos.length });
+        diagnostico('opciones insertadas', { estrategia: estrategiaUsada, opciones: estado.articulos.length });
+
+        // 3. Preseleccionar el artículo nativo de la línea, si está en el listado.
         const idArticulo = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO }));
         if (idArticulo && estado.permitidos.has(idArticulo)) {
-            registro.setCurrentSublistValue({
-                sublistId: SUBLISTA,
-                fieldId: IDS.FLD_COL_AUX,
-                value: idArticulo,
-                ignoreFieldChange: true
-            });
+            registro.setCurrentSublistValue({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX, value: idArticulo, ignoreFieldChange: true });
         }
     }
 
-    function leerLineasActuales(registro) {
-        const total = registro.getLineCount({ sublistId: SUBLISTA });
-        const lineas = [];
-        for (let i = 0; i < total; i++) {
-            const idArticulo = reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_ARTICULO, i));
-            lineas.push({
-                clave: reglas.aTextoId(leerValorLinea(registro, ESTANDAR.COL_CLAVE_LINEA, i)),
-                numero: i + 1,
-                idArticulo,
-                textoArticulo: registro.getSublistText({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, line: i }) || idArticulo
-            });
-        }
-        return lineas;
+    function esLineaTemporal(idArticulo) {
+        return estado.idArticuloTemporal !== '' && estado.idArticuloTemporal === reglas.aTextoId(idArticulo);
+    }
+
+    function esEdicion() {
+        return estado.modo === 'edit';
+    }
+
+    function lineasOriginalesComoLista() {
+        return Array.from(estado.lineasOriginales.values());
     }
 
     function leerValorLinea(registro, fieldId, linea) {
@@ -421,6 +471,7 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         pageInit,
         validateField,
         fieldChanged,
+        postSourcing,
         lineInit,
         validateLine,
         saveRecord
