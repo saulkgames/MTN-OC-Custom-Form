@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.6, 2026-11-13 |
+| Versión | 1.7, 2026-11-13 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
@@ -201,7 +201,7 @@ Elegir proveedor recarga la página completa en OneWorld; el selector se vuelve 
 ## 6. Pruebas en cuenta
 
 No hay pruebas locales; todas se ejecutan en sandbox.
-Durante las pruebas, la bitácora del despliegue va en Auditoría y la consola F12 abierta con "Conservar registro" (sección 7.1).
+Durante las pruebas, la bitácora de los despliegues va en Auditoría; para ver los mensajes de consola, activar el diagnóstico (sección 7.1).
 
 | Caso | Regla | Escenario | Resultado esperado |
 |---|---|---|---|
@@ -250,7 +250,7 @@ Mensajes de `beforeLoad` en nivel Auditoría: "Selector llenado en servidor", "S
 El Client Script escribe mensajes con el prefijo `[sads_mtn]` en la consola del navegador (F12).
 No muestra nada al usuario ni modifica la página.
 Activar "Conservar registro" (Preserve log): elegir proveedor recarga la página y, sin esa opción, la consola se borra.
-Se apaga con `DIAGNOSTICO.ACTIVO = false` en `lib/config.js` y un nuevo despliegue.
+Viene apagado (`DIAGNOSTICO.ACTIVO = false` en `lib/config.js`). Para diagnosticar, cambiarlo a `true` y volver a desplegar; al terminar, regresarlo a `false`.
 
 | Mensaje | Significado | Acción |
 |---|---|---|

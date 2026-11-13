@@ -65,10 +65,10 @@ define([], () => {
 
     /**
      * Diagnóstico del Client Script en la consola del navegador (F12).
-     * No afecta al usuario. Poner ACTIVO en false y volver a desplegar para apagarlo.
+     * Apagado. Para reactivarlo: ACTIVO en true y volver a desplegar. No afecta al usuario.
      */
     const DIAGNOSTICO = Object.freeze({
-        ACTIVO: true,
+        ACTIVO: false,
         PREFIJO: '[sads_mtn]'
     });
 
