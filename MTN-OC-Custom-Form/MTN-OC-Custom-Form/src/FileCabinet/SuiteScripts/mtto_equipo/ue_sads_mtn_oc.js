@@ -4,16 +4,16 @@
  * @NModuleScope SameAccount
  *
  * User Event de Orden de compra (IDs en lib/config.js).
- * beforeLoad: en el formulario exclusivo agrega la columna auxiliar, bloquea el artículo nativo,
- *             publica el ID del artículo temporal y adjunta el Client Script.
- * beforeSubmit: elimina líneas temporales y garantiza, en todos los contextos,
- *               que una OC con equipo solo tenga artículos de su listado.
+ * beforeLoad: en el formulario exclusivo agrega el selector "Artículo del equipo" y el botón "Agregar artículo"
+ *             en la pestaña Artículos, llena el selector si el equipo ya se conoce, bloquea el artículo nativo
+ *             y adjunta el Client Script.
+ * beforeSubmit: garantiza, en todos los contextos, que una OC con equipo solo tenga artículos de su listado.
  * Sin estado a nivel de módulo.
  */
 define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', './lib/reglas', './lib/datos'],
     (serverWidget, runtime, error, log, config, reglas, datos) => {
 
-        const { IDS, ESTANDAR, ETIQUETAS, RUTAS, MENSAJES, CODIGOS, MENSAJE_POR_CODIGO } = config;
+        const { IDS, ESTANDAR, ETIQUETAS, RUTAS, SELECTOR, MENSAJES, CODIGOS, MENSAJE_POR_CODIGO } = config;
         const SUBLISTA = ESTANDAR.SUBLISTA_ARTICULOS;
 
         // ================================================================ beforeLoad
@@ -29,8 +29,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             }
 
             // 2. Solo en el formulario exclusivo: el del registro o, si viene vacío al crear, el parámetro cf de la URL.
-            const script = runtime.getCurrentScript();
-            const idFormularioExclusivo = script.getParameter({ name: IDS.PARAM_FORM });
+            const idFormularioExclusivo = runtime.getCurrentScript().getParameter({ name: IDS.PARAM_FORM });
             if (reglas.esVacio(idFormularioExclusivo)) {
                 log.audit({
                     title: 'Parámetro de formulario vacío',
@@ -49,18 +48,69 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             const formulario = contexto.form;
             const sublista = formulario.getSublist({ id: SUBLISTA });
             if (!sublista) {
-                log.audit({ title: 'Sublista de artículos no disponible', details: 'No se agregó la columna auxiliar.' });
+                log.audit({ title: 'Sublista de artículos no disponible', details: 'No se agregó el selector.' });
                 return;
             }
 
-            // 3. Columna auxiliar: selección sin origen; las opciones las inserta el Client Script.
-            sublista.addField({
-                id: IDS.FLD_COL_AUX,
-                type: serverWidget.FieldType.SELECT,
-                label: ETIQUETAS.LBL_COL_AUX
-            });
+            // 3. Selector y botón "Agregar artículo" en la pestaña Artículos.
+            //    Si NetSuite rechaza la pestaña estándar, se agregan en el área principal.
+            let selector = null;
+            let boton = null;
+            const contenedores = [ESTANDAR.SUBPESTANA_ARTICULOS, ''];
+            for (let i = 0; i < contenedores.length && !selector; i++) {
+                const opcionesSelector = { id: IDS.FLD_SEL_ARTICULO, type: serverWidget.FieldType.SELECT, label: ETIQUETAS.LBL_SEL_ARTICULO };
+                const opcionesBoton = { id: IDS.FLD_BTN_AGREGAR, type: serverWidget.FieldType.INLINEHTML, label: ETIQUETAS.LBL_BTN_AGREGAR };
+                if (contenedores[i]) {
+                    opcionesSelector.container = contenedores[i];
+                    opcionesBoton.container = contenedores[i];
+                }
+                try {
+                    selector = formulario.addField(opcionesSelector);
+                    boton = formulario.addField(opcionesBoton);
+                } catch (e) {
+                    log.audit({
+                        title: 'Selector no agregado en ' + (contenedores[i] || 'área principal'),
+                        details: (e && e.message) || String(e)
+                    });
+                    selector = null;
+                    boton = null;
+                }
+            }
+            if (!selector || !boton) {
+                log.audit({ title: 'Selector no disponible', details: 'No se pudo agregar el selector ni el botón.' });
+                return;
+            }
 
-            // 4. RN-12: bloquear el artículo nativo. Si la plataforma lo rechaza, se registra y la validación sigue activa.
+            // 4. Misma fila: el selector abre la fila y el botón la cierra.
+            selector.updateLayoutType({ layoutType: serverWidget.FieldLayoutType.STARTROW });
+            boton.updateLayoutType({ layoutType: serverWidget.FieldLayoutType.ENDROW });
+
+            // 5. D-O: el botón llama a agregarArticuloSeleccionado del Client Script. HTML estático, sin datos del usuario.
+            boton.defaultValue =
+                '<button type="button" id="' + IDS.FLD_BTN_AGREGAR + '_boton" ' +
+                'onclick="require([\'' + RUTAS.MODULO_CS + '\'], function (cs) { cs.agregarArticuloSeleccionado(); }); return false;">' +
+                ETIQUETAS.LBL_BTN_AGREGAR + '</button>';
+
+            // 6. D-N: si el equipo ya se conoce (edición, copia o recarga por proveedor), llenar el selector en servidor.
+            selector.addSelectOption({ value: SELECTOR.VALOR_VACIO, text: ' ' });
+            const idEquipoCargado = reglas.aTextoId(contexto.newRecord.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
+            if (idEquipoCargado) {
+                const seleccion = datos.prepararSeleccion(idEquipoCargado, {
+                    bitacora: (titulo, detalle) => log.audit({ title: titulo, details: detalle })
+                });
+                if (seleccion.exito) {
+                    seleccion.articulos.forEach((articulo) => {
+                        selector.addSelectOption({ value: articulo.id, text: articulo.etiqueta });
+                    });
+                } else {
+                    log.audit({
+                        title: 'Selector sin artículos: ' + seleccion.codigo,
+                        details: 'Equipo: ' + idEquipoCargado + ' | Detalle: ' + (seleccion.detalle || '')
+                    });
+                }
+            }
+
+            // 7. RN-12: bloquear el artículo nativo. Si la plataforma lo rechaza, se registra y la validación sigue activa.
             try {
                 const campoArticulo = sublista.getField({ id: ESTANDAR.COL_ARTICULO });
                 if (campoArticulo) {
@@ -72,19 +122,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 log.audit({ title: 'Artículo nativo no bloqueado', details: (e && e.message) || String(e) });
             }
 
-            // 5. D-H: publicar el ID del artículo temporal para el Client Script. Vacío: la línea temporal queda apagada.
-            const idArticuloTemporal = script.getParameter({ name: IDS.PARAM_ITEM_TEMPORAL });
-            if (!reglas.esVacio(idArticuloTemporal)) {
-                const campoTemporal = formulario.addField({
-                    id: IDS.FLD_ITEM_TEMPORAL,
-                    type: serverWidget.FieldType.TEXT,
-                    label: ETIQUETAS.LBL_ITEM_TEMPORAL
-                });
-                campoTemporal.updateDisplayType({ displayType: serverWidget.FieldDisplayType.HIDDEN });
-                campoTemporal.defaultValue = String(idArticuloTemporal);
-            }
-
-            // 6. Adjuntar el Client Script.
+            // 8. Adjuntar el Client Script.
             formulario.clientScriptModulePath = RUTAS.ARCHIVO_CS;
             log.audit({ title: 'Client Script adjuntado', details: RUTAS.ARCHIVO_CS });
         }
@@ -112,23 +150,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 return;
             }
 
-            // 3. D-I: eliminar las líneas del artículo temporal, en cualquier contexto, antes de validar.
-            const idArticuloTemporal = reglas.aTextoId(runtime.getCurrentScript().getParameter({ name: IDS.PARAM_ITEM_TEMPORAL }));
-            if (idArticuloTemporal) {
-                let eliminadas = 0;
-                for (let i = nuevo.getLineCount({ sublistId: SUBLISTA }) - 1; i >= 0; i--) {
-                    const idArticuloLinea = reglas.aTextoId(nuevo.getSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO, line: i }));
-                    if (idArticuloLinea === idArticuloTemporal) {
-                        nuevo.removeLine({ sublistId: SUBLISTA, line: i });
-                        eliminadas++;
-                    }
-                }
-                if (eliminadas) {
-                    log.audit({ title: 'Líneas temporales eliminadas', details: 'Líneas eliminadas: ' + eliminadas });
-                }
-            }
-
-            // 4. Datos planos de cabecera y líneas.
+            // 3. Datos planos de cabecera y líneas.
             const esCreacion = contexto.type === tipos.CREATE;
             const idEquipo = reglas.aTextoId(nuevo.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
             const idEquipoOriginal = esCreacion || !anterior ? '' : reglas.aTextoId(anterior.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
@@ -164,7 +186,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 }
             }
 
-            // 5. RN-10 (D-B): con líneas recibidas o facturadas, el equipo no cambia; tampoco puede quedar vacío.
+            // 4. RN-10 (D-B): con líneas recibidas o facturadas, el equipo no cambia; tampoco puede quedar vacío.
             if (!esCreacion && equipoCambio && !reglas.equipoEditable(lineasOriginales)) {
                 throw error.create({
                     name: CODIGOS.EQUIPO_NO_EDITABLE,
@@ -173,12 +195,12 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 });
             }
 
-            // 6. RN-06: sin equipo la regla no aplica en servidor.
+            // 5. RN-06: sin equipo la regla no aplica en servidor.
             if (!idEquipo) {
                 return;
             }
 
-            // 7. RN-07: el equipo debe existir.
+            // 6. RN-07: el equipo debe existir.
             const equipo = datos.obtenerEquipo(idEquipo);
             if (!equipo) {
                 log.error({
@@ -194,16 +216,16 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             const nombreEquipo = equipo.nombre || equipo.id;
             const errores = [];
 
-            // 8. RN-08: subsidiaria del equipo igual a la de la OC.
+            // 7. RN-08: subsidiaria del equipo igual a la de la OC.
             if (!reglas.esSubsidiariaCompatible(equipo.idSubsidiaria, idSubsidiariaTransaccion)) {
                 errores.push(crearError(CODIGOS.SUBSIDIARIA_INCOMPATIBLE, { equipo: nombreEquipo }));
             }
 
-            // 9. RN-04: líneas a validar. Sin líneas a validar no se ejecuta la búsqueda.
+            // 8. RN-04: líneas a validar. Sin líneas a validar no se ejecuta la búsqueda.
             const aValidar = reglas.lineasAValidar({ esCreacion, equipoCambio, lineasActuales, lineasOriginales });
             if (aValidar.length) {
 
-                // 10. UC-01 con el equipo ya leído (sin segunda lectura).
+                // 9. UC-01 con el equipo ya leído (sin segunda lectura).
                 const seleccion = datos.prepararSeleccion(idEquipo, {
                     equipo,
                     bitacora: (titulo, detalle) => log.audit({ title: titulo, details: detalle })
@@ -216,7 +238,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                     errores.push(crearError(seleccion.codigo, { equipo: seleccion.nombreEquipo }));
                 } else {
 
-                    // 11. RN-03: cada línea a validar debe estar en el listado del equipo.
+                    // 10. RN-03: cada línea a validar debe estar en el listado del equipo.
                     const permitidos = new Set(seleccion.articulos.map((articulo) => articulo.id));
                     const fuera = reglas.lineasFueraDeListado(permitidos, aValidar);
                     if (fuera.length) {
@@ -228,7 +250,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 }
             }
 
-            // 12. Lanzar con el primer código y el mensaje de todos.
+            // 11. Lanzar con el primer código y el mensaje de todos.
             if (errores.length) {
                 throw error.create({
                     name: errores[0].codigo,

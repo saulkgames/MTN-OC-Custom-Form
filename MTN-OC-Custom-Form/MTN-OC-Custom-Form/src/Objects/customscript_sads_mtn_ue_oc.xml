@@ -1,5 +1,5 @@
 <usereventscript scriptid="customscript_sads_mtn_ue_oc">
-    <description>Filtra los artículos de la Orden de compra por el equipo de transporte de la cabecera. beforeLoad agrega la columna auxiliar y bloquea el artículo nativo en el formulario exclusivo; beforeSubmit valida en todos los contextos.</description>
+    <description>Filtra los artículos de la Orden de compra por el equipo de transporte de la cabecera. beforeLoad agrega el selector de artículos con su botón y bloquea el artículo nativo en el formulario exclusivo; beforeSubmit valida en todos los contextos.</description>
     <isinactive>F</isinactive>
     <name>SADS MTN Equipo en Orden de compra (UE)</name>
     <notifyowner>T</notifyowner>
@@ -11,13 +11,6 @@
             <help>Capture el ID interno del formulario personalizado de OC de mantenimiento. Vacío: la columna auxiliar no se agrega.</help>
             <ismandatory>F</ismandatory>
             <label>ID del formulario exclusivo</label>
-        </scriptcustomfield>
-        <scriptcustomfield scriptid="custscript_sads_mtn_item_temporal">
-            <description>ID interno del artículo de línea temporal (Otro cargo para la compra, precio 0, fuera de todas las búsquedas de equipo).</description>
-            <fieldtype>INTEGER</fieldtype>
-            <help>Capture el ID interno del artículo de línea temporal. Vacío: no se inserta la línea temporal. La línea temporal nunca se guarda: la quitan el Client Script y el User Event.</help>
-            <ismandatory>F</ismandatory>
-            <label>ID del artículo de línea temporal</label>
         </scriptcustomfield>
     </scriptcustomfields>
     <scriptdeployments>

@@ -14,19 +14,18 @@ define([], () => {
         FLD_EQ_BUSQUEDA: 'custrecord_sads_mtn_eq_busqueda',
         FLD_EQ_SUBSIDIARIA: 'custrecord_sads_mtn_eq_subsidiaria',
         FLD_BODY_EQUIPO: 'custbody_sads_mtn_equipo',
-        FLD_COL_AUX: 'custpage_sads_mtn_articulo',
+        FLD_SEL_ARTICULO: 'custpage_sads_mtn_articulo',
+        FLD_BTN_AGREGAR: 'custpage_sads_mtn_btn_agregar',
         SCRIPT_UE: 'customscript_sads_mtn_ue_oc',
         DEPLOY_UE: 'customdeploy_sads_mtn_ue_oc',
-        PARAM_FORM: 'custscript_sads_mtn_form_id',
-        PARAM_ITEM_TEMPORAL: 'custscript_sads_mtn_item_temporal',
-        FLD_ITEM_TEMPORAL: 'custpage_sads_mtn_item_temporal'
+        PARAM_FORM: 'custscript_sads_mtn_form_id'
     });
 
     /** IDs estándar de NetSuite usados por la solución. Supuesto S-11: verificar en el paso 0 del despliegue. */
     const ESTANDAR = Object.freeze({
         FLD_FORMULARIO: 'customform',
         FLD_SUBSIDIARIA: 'subsidiary',
-        FLD_PROVEEDOR: 'entity',
+        SUBPESTANA_ARTICULOS: 'items',
         SUBLISTA_ARTICULOS: 'item',
         COL_ARTICULO: 'item',
         COL_CLAVE_LINEA: 'lineuniquekey',
@@ -40,8 +39,8 @@ define([], () => {
     const ETIQUETAS = Object.freeze({
         LBL_REC_EQUIPO: 'Equipo de transporte',
         LBL_EQUIPO: 'Equipo de transporte',
-        LBL_COL_AUX: 'Artículo del equipo',
-        LBL_ITEM_TEMPORAL: 'Artículo de línea temporal',
+        LBL_SEL_ARTICULO: 'Artículo del equipo',
+        LBL_BTN_AGREGAR: 'Agregar artículo',
         ETIQUETA_COL_EXCLUIR: 'MTTO_EXCLUIR'
     });
 
@@ -49,9 +48,18 @@ define([], () => {
         MAX_RESULTADOS_BUSQUEDA: 1000
     });
 
-    /** Ruta del Client Script relativa al User Event. */
+    /** Valor de la opción vacía del selector; un espacio para no depender de opciones con valor vacío. */
+    const SELECTOR = Object.freeze({
+        VALOR_VACIO: ' '
+    });
+
+    /**
+     * ARCHIVO_CS: ruta del Client Script relativa al User Event (clientScriptModulePath).
+     * MODULO_CS: ruta absoluta del mismo módulo para el require del botón "Agregar artículo".
+     */
     const RUTAS = Object.freeze({
-        ARCHIVO_CS: './cs_sads_mtn_oc.js'
+        ARCHIVO_CS: './cs_sads_mtn_oc.js',
+        MODULO_CS: '/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js'
     });
 
     /**
@@ -71,7 +79,8 @@ define([], () => {
         MSG_05: 'La búsqueda configurada para el equipo [equipo] no existe, no es accesible o no devuelve artículos. Contacte al administrador.',
         MSG_06: 'El equipo [equipo] no pertenece a la subsidiaria de la orden.',
         MSG_07: 'El equipo no puede cambiarse porque la orden tiene líneas recibidas o facturadas.',
-        MSG_08: 'El equipo solo puede cambiarse desde el formulario de la orden.'
+        MSG_08: 'El equipo solo puede cambiarse desde el formulario de la orden.',
+        MSG_09: 'Seleccione un artículo del equipo.'
     });
 
     const CODIGOS = Object.freeze({
@@ -111,6 +120,7 @@ define([], () => {
         ESTANDAR,
         ETIQUETAS,
         LIMITES,
+        SELECTOR,
         RUTAS,
         DIAGNOSTICO,
         MENSAJES,
