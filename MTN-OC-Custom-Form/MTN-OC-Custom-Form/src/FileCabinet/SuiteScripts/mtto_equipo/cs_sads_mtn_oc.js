@@ -10,7 +10,7 @@
  */
 define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) => {
 
-    const { IDS, ESTANDAR, MENSAJES } = config;
+    const { IDS, ESTANDAR, MENSAJES, RUTAS, DIAGNOSTICO } = config;
     const SUBLISTA = ESTANDAR.SUBLISTA_ARTICULOS;
     const VALOR_OPCION_VACIA = ' ';
 
@@ -30,6 +30,9 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         reinicioPorSubsidiaria: false
     };
 
+    // Distingue "módulo no cargado" de "módulo cargado pero pageInit no ejecutado".
+    diagnostico('módulo cargado', { archivo: RUTAS.ARCHIVO_CS });
+
     // ---------------------------------------------------------------- pageInit
 
     function pageInit(contexto) {
@@ -37,6 +40,7 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         estado.modo = contexto.mode;
         estado.idEquipo = reglas.aTextoId(registro.getValue({ fieldId: IDS.FLD_BODY_EQUIPO }));
         estado.idEquipoOriginal = esEdicion() ? estado.idEquipo : '';
+        diagnostico('pageInit', { modo: estado.modo, equipo: estado.idEquipo });
 
         if (esEdicion()) {
             guardarLineasOriginales(registro);
@@ -272,8 +276,10 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
             estado.articulos = resultado.articulos;
             estado.permitidos = new Map(resultado.articulos.map((articulo) => [articulo.id, articulo.etiqueta]));
             estado.cargaValida = true;
+            diagnostico('carga de artículos: éxito', { equipo: idEquipo, articulos: resultado.articulos.length });
             return;
         }
+        diagnostico('carga de artículos: falla', { equipo: idEquipo, codigo: resultado.codigo, detalle: resultado.detalle });
         estado.equipo = resultado.equipo;
         estado.nombreEquipo = (resultado.equipo && resultado.equipo.nombre) || textoCampo || resultado.nombreEquipo;
         estado.articulos = [];
@@ -302,33 +308,69 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
         }
     }
 
+    /**
+     * Obtiene el campo de la columna auxiliar para la línea en captura.
+     * En Client Scripts, getSublistField puede fallar en una línea nueva sin confirmar (SSS_INVALID_SUBLIST_OPERATION).
+     * Estrategias en orden: (1) línea actual; (2) línea 0, si hay líneas confirmadas.
+     * Cada intento fallido queda en la consola.
+     * @returns {{campo: Object, estrategia: string}|null}
+     */
     function obtenerCampoAuxiliar(registro) {
+        const total = registro.getLineCount({ sublistId: SUBLISTA });
+        let indiceActual = null;
         try {
-            const linea = registro.getCurrentSublistIndex({ sublistId: SUBLISTA });
-            return registro.getSublistField({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX, line: linea });
+            indiceActual = registro.getCurrentSublistIndex({ sublistId: SUBLISTA });
         } catch (e) {
-            return null;
+            diagnostico('campo auxiliar: índice actual no disponible', describirError(e));
         }
+        const estrategias = [];
+        if (indiceActual !== null && indiceActual !== undefined) {
+            estrategias.push({ nombre: 'línea actual', linea: indiceActual });
+        }
+        if (total > 0 && indiceActual !== 0) {
+            estrategias.push({ nombre: 'línea 0', linea: 0 });
+        }
+        for (let i = 0; i < estrategias.length; i++) {
+            const estrategia = estrategias[i];
+            const contexto = { linea: estrategia.linea, indiceActual, total };
+            try {
+                const campo = registro.getSublistField({ sublistId: SUBLISTA, fieldId: IDS.FLD_COL_AUX, line: estrategia.linea });
+                if (campo) {
+                    return { campo, estrategia: estrategia.nombre };
+                }
+                diagnostico('campo auxiliar: ' + estrategia.nombre + ' devolvió nulo', contexto);
+            } catch (e) {
+                diagnostico('campo auxiliar: ' + estrategia.nombre + ' falló', Object.assign(contexto, describirError(e)));
+            }
+        }
+        diagnostico('campo auxiliar no disponible', { indiceActual, total });
+        return null;
     }
 
     function limpiarOpcionesLineaActual(registro) {
-        const campo = obtenerCampoAuxiliar(registro);
-        if (campo) {
-            campo.removeSelectOption({ value: null });
+        const obtenido = obtenerCampoAuxiliar(registro);
+        if (obtenido) {
+            obtenido.campo.removeSelectOption({ value: null });
         }
     }
 
     /** Opción vacía más los artículos del estado; preselecciona el artículo nativo sin disparar fieldChanged. */
     function poblarOpcionesLineaActual(registro) {
-        const campo = obtenerCampoAuxiliar(registro);
-        if (!campo) {
+        const obtenido = obtenerCampoAuxiliar(registro);
+        if (!obtenido) {
             return;
         }
+        const campo = obtenido.campo;
         campo.removeSelectOption({ value: null });
-        campo.insertSelectOption({ value: VALOR_OPCION_VACIA, text: ' ' });
+        try {
+            campo.insertSelectOption({ value: VALOR_OPCION_VACIA, text: ' ' });
+        } catch (e) {
+            diagnostico('opción vacía no insertada', describirError(e));
+        }
         estado.articulos.forEach((articulo) => {
             campo.insertSelectOption({ value: articulo.id, text: articulo.etiqueta });
         });
+        diagnostico('opciones insertadas', { estrategia: obtenido.estrategia, opciones: estado.articulos.length });
         const idArticulo = reglas.aTextoId(registro.getCurrentSublistValue({ sublistId: SUBLISTA, fieldId: ESTANDAR.COL_ARTICULO }));
         if (idArticulo && estado.permitidos.has(idArticulo)) {
             registro.setCurrentSublistValue({
@@ -357,6 +399,22 @@ define(['./lib/config', './lib/reglas', './lib/datos'], (config, reglas, datos) 
 
     function leerValorLinea(registro, fieldId, linea) {
         return registro.getSublistValue({ sublistId: SUBLISTA, fieldId, line: linea });
+    }
+
+    /** Mensaje en la consola del navegador con el prefijo del proyecto; no toca el DOM ni interrumpe al usuario. */
+    function diagnostico(etapa, datosDiagnostico) {
+        if (!DIAGNOSTICO.ACTIVO || typeof console === 'undefined' || typeof console.warn !== 'function') {
+            return;
+        }
+        try {
+            console.warn(DIAGNOSTICO.PREFIJO + ' ' + etapa, datosDiagnostico || {});
+        } catch (e) {
+            // Consola no disponible.
+        }
+    }
+
+    function describirError(e) {
+        return { error: (e && (e.name || e.type)) || 'desconocido', mensaje: (e && e.message) || String(e) };
     }
 
     return {

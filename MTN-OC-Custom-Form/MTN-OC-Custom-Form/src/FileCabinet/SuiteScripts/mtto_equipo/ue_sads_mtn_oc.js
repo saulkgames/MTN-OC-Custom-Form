@@ -45,6 +45,7 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             agregarColumnaAuxiliar(sublista);
             bloquearArticuloNativo(sublista);
             contexto.form.clientScriptModulePath = RUTAS.ARCHIVO_CS;
+            log.audit({ title: 'Client Script adjuntado', details: RUTAS.ARCHIVO_CS });
         }
 
         function leerParametroFormulario() {

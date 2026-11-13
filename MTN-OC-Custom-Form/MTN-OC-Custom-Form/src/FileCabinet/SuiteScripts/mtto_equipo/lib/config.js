@@ -50,6 +50,15 @@ define([], () => {
         ARCHIVO_CS: './cs_sads_mtn_oc.js'
     });
 
+    /**
+     * Diagnóstico del Client Script en la consola del navegador (F12).
+     * No afecta al usuario. Poner ACTIVO en false y volver a desplegar para apagarlo.
+     */
+    const DIAGNOSTICO = Object.freeze({
+        ACTIVO: true,
+        PREFIJO: '[sads_mtn]'
+    });
+
     const MENSAJES = Object.freeze({
         MSG_01: 'Seleccione un equipo de transporte antes de capturar artículos.',
         MSG_02: 'Al cambiar el equipo se eliminarán todas las líneas capturadas. ¿Desea continuar?',
@@ -105,6 +114,7 @@ define([], () => {
         ETIQUETAS,
         LIMITES,
         RUTAS,
+        DIAGNOSTICO,
         MENSAJES,
         CODIGOS,
         MENSAJE_POR_CODIGO,

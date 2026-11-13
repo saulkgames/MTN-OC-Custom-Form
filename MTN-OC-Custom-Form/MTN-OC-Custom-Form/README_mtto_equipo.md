@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.0, 2026-11-13 |
+| Versión | 1.1, 2026-11-13 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
-| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md` |
+| Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; corrección en `..._v5.md` |
 | Tipo de proyecto | SDF, personalización de cuenta |
 | Estado del despliegue al instalar | Pruebas |
 
@@ -160,7 +160,7 @@ Durante las pruebas, la bitácora del despliegue va en Auditoría para ver adver
 
 | Caso | Regla | Escenario | Resultado esperado |
 |---|---|---|---|
-| POC-1 | — | OC con 30 líneas en el formulario exclusivo | Opciones correctas en cada línea sin retraso perceptible |
+| POC-1 | — | OC con 30 líneas en el formulario exclusivo, con la consola F12 abierta (sección 7.1) | Opciones correctas en cada línea, incluida la primera de una OC nueva, sin retraso perceptible. Registrar los mensajes `[sads_mtn]` |
 | POC-2 | — | Edición de OC existente | La columna muestra el artículo nativo de cada línea |
 | POC-3 | — | Elegir artículo en la columna | Precio, descripción, unidad e impuesto se completan antes de confirmar la línea |
 | POC-4 | RN-12 | Formulario exclusivo | Campo nativo no editable; asignación por script funciona |
@@ -193,7 +193,32 @@ Si POC-1, POC-2 o POC-3 fallan, la solución no avanza a producción.
 | `MTTO_SUBSIDIARIA_INCOMPATIBLE` | RN-08 | MSG-06 | — |
 | `MTTO_EQUIPO_NO_EDITABLE` | RN-10 y RN-11 | MSG-07 o MSG-08 | — |
 
-Advertencias de `beforeLoad` (nivel Auditoría): parámetro de formulario vacío, sublista no disponible, artículo nativo no bloqueado, búsqueda con 1,000 filas.
+Mensajes de `beforeLoad` (nivel Auditoría): "Client Script adjuntado", parámetro de formulario vacío, sublista no disponible, artículo nativo no bloqueado, búsqueda con 1,000 filas.
+
+### 7.1 Diagnóstico en pantalla
+
+El Client Script escribe mensajes con el prefijo `[sads_mtn]` en la consola del navegador.
+No muestra nada al usuario ni modifica la página.
+Se apaga con `DIAGNOSTICO.ACTIVO = false` en `lib/config.js` y un nuevo despliegue.
+
+Comprobaciones rápidas cuando la columna "Artículo del equipo" sale sin opciones:
+
+| # | Prueba | Si el Client Script carga | Si no carga |
+|---|---|---|---|
+| P-1 | OC nueva con el formulario exclusivo, sin equipo; pulsar "Agregar" en la sublista de artículos | Aparece MSG-01 | Aparece el aviso nativo de artículo obligatorio, o nada |
+| P-2 | F12 > Red, filtrar `sads_mtn`; recargar la OC | `cs_sads_mtn_oc.js`, `config.js`, `reglas.js` y `datos.js` con estado 200 | No aparecen, o aparecen con 404 |
+| P-3 | F12 > Consola al abrir la OC y al elegir equipo | Mensajes `[sads_mtn]` y ningún error rojo del proyecto | Error con `mtto_equipo` o `MODULE_DOES_NOT_EXIST` |
+
+Interpretación de los mensajes:
+
+| Mensaje | Significado | Acción |
+|---|---|---|
+| Ningún mensaje `[sads_mtn]`, y la bitácora del UE dice "Client Script adjuntado" | El UE adjunta el script, pero el navegador no lo carga | Revisar P-2 y P-3. Si los archivos existen, cambiar `RUTAS.ARCHIVO_CS` a `/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js` |
+| La bitácora del UE no dice "Client Script adjuntado" | `beforeLoad` termina antes de adjuntar | Revisar el parámetro de formulario y los demás mensajes de `beforeLoad` |
+| `módulo cargado` sin `pageInit` | NetSuite no invoca los puntos de entrada | Revisar errores rojos en la consola |
+| `carga de artículos: falla` | La búsqueda o el equipo fallan; también aparece MSG-05 | Revisar el registro Equipo y la búsqueda |
+| `campo auxiliar: línea actual falló` y luego `opciones insertadas` con estrategia `línea 0` | La estrategia alternativa funciona | Ninguna |
+| `campo auxiliar no disponible` | Ninguna estrategia obtiene el campo; ocurre en la primera línea de una OC nueva si NetSuite no entrega el campo de una línea sin confirmar | Reportar el mensaje completo; la alternativa es un campo de selección en cabecera |
 
 ## 8. Gobernanza
 
@@ -235,6 +260,7 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | I-07 | Etiquetas no definidas en el prompt: "Búsqueda guardada", "Subsidiaria", nombre del script y título del despliegue | El prompt no las define |
 | I-08 | `manifest.xml` declara `CUSTOMRECORDS`, `SERVERSIDESCRIPTING`, `CLIENTSUITESCRIPT` y `SUBSIDIARIES` | Features que usan los objetos; confirmar con `project:validate --server` |
 | I-09 | El parámetro `cf` se usa siempre que el registro no traiga formulario (creación y copia) | El prompt lo indica para creación; la copia también es creación |
+| I-10 | El campo de la columna se obtiene con dos estrategias (línea actual y línea 0) y el Client Script escribe diagnóstico en la consola del navegador | En sandbox la columna salió sin opciones; `getSublistField` puede fallar en líneas nuevas sin confirmar |
 
 ## 11. Valores pendientes
 
@@ -255,6 +281,8 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | R-04 | IDs estándar de línea y `selectrecordtype` -117 no verificados | Supuesto S-11 | RN-04 o RN-10 fallan en silencio | Paso 0, SB-07 y SB-11 |
 | R-05 | El bloqueo del campo nativo o su asignación por script puede no funcionar | Supuesto S-06 | RN-12 no se cumple en pantalla | Bitácora; validación de servidor activa; POC-4 |
 | R-06 | `lineuniquekey` puede no estar disponible en cliente | Comportamiento de cliente no verificado | En edición, el Client Script valida todas las líneas y puede rechazar líneas originales que el servidor aceptaría | SB-11; el servidor sigue siendo la referencia |
+| R-07 | La primera línea de una OC nueva puede quedar sin opciones | Sin líneas confirmadas no hay línea 0 para la estrategia alternativa | El usuario no puede capturar la primera línea con la columna | Diagnóstico de la sección 7.1; alternativa: campo de selección en cabecera |
+| R-08 | La estrategia de línea 0 supone que las opciones de una línea confirmada afectan la línea en captura | Comportamiento no documentado por Oracle | Puede dejar de funcionar en una versión futura de NetSuite | Diagnóstico activo; repetir POC-1 en cada actualización mayor |
 
 ## 13. Supuestos y fuentes
 
