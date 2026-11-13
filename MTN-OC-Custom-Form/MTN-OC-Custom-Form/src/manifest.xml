@@ -1,12 +1,12 @@
 <manifest projecttype="ACCOUNTCUSTOMIZATION">
-    <projectname>MTN-OC-Custom-Form</projectname>
-    <frameworkversion>1.0</frameworkversion>
-    <dependencies>
-        <features>
-            <feature required="true">CUSTOMRECORDS</feature>
-            <feature required="true">SERVERSIDESCRIPTING</feature>
-            <feature required="true">CLIENTSUITESCRIPT</feature>
-            <feature required="true">SUBSIDIARIES</feature>
-        </features>
-    </dependencies>
+  <projectname>MTN-OC-Custom-Form</projectname>
+  <frameworkversion>1.0</frameworkversion>
+  <dependencies>
+    <features>
+      <feature required="true">CUSTOMRECORDS</feature>
+      <feature required="true">SERVERSIDESCRIPTING</feature>
+      <feature required="true">SUBSIDIARIES</feature>
+      <feature required="false">ACCOUNTING</feature>
+    </features>
+  </dependencies>
 </manifest>

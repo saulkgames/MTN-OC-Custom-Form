@@ -1,5 +1,5 @@
 <customrecordtype scriptid="customrecord_sads_mtn_equipo">
-    <accesstype>USEPERMISSIONLIST</accesstype>
+    <accesstype></accesstype>
     <description>Equipo de transporte con su búsqueda guardada de artículos de mantenimiento y su subsidiaria. Lo usa el filtrado de artículos en Órdenes de compra.</description>
     <enablesystemnotes>T</enablesystemnotes>
     <includename>T</includename>
