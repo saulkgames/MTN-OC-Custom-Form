@@ -10,7 +10,7 @@
  */
 define(['N/search', './reglas', './config'], (search, reglas, config) => {
 
-    const { IDS, ESTANDAR, ETIQUETAS, LIMITES, CODIGOS, TIPOS_BUSQUEDA_ARTICULO } = config;
+    const { IDS, ESTANDAR, ETIQUETAS, LIMITES, CODIGOS } = config;
 
     /**
      * Lee el registro Equipo en una sola lectura de campos (1 unidad).
@@ -55,8 +55,8 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
 
     /**
      * Carga la búsqueda guardada por su ID de script y lee sus filas en una sola lectura (15 unidades).
-     * Lanza error si la búsqueda no existe, no es accesible o su tipo no está en TIPOS_BUSQUEDA_ARTICULO
-     * (artículo genérico o subtipo de compra, por ejemplo otherchargepurchase).
+     * Lanza error si la búsqueda no existe o no es accesible.
+     * No valida el tipo de búsqueda (D-S): las búsquedas de los equipos ya filtran por tipo de artículo.
      * @param {string} idBusqueda ID de script de la búsqueda
      * @param {{bitacora?: function(string, string): void}} [opciones] bitacora solo se inyecta en servidor
      * @returns {Array<{id: string, etiqueta: string, excluir: *}>}
@@ -64,11 +64,6 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
     function leerArticulosBusqueda(idBusqueda, opciones) {
         const bitacora = opciones && typeof opciones.bitacora === 'function' ? opciones.bitacora : null;
         const busqueda = search.load({ id: idBusqueda });
-        const tipoBusqueda = String(busqueda.searchType || '').toLowerCase();
-        if (TIPOS_BUSQUEDA_ARTICULO.indexOf(tipoBusqueda) === -1) {
-            throw new Error('La búsqueda ' + idBusqueda + ' es de tipo ' + busqueda.searchType +
-                ', que no está entre los tipos de artículo aceptados (TIPOS_BUSQUEDA_ARTICULO en lib/config.js).');
-        }
         const columnas = busqueda.columns || [];
         if (!columnas.length) {
             throw new Error('La búsqueda ' + idBusqueda + ' no tiene columnas.');

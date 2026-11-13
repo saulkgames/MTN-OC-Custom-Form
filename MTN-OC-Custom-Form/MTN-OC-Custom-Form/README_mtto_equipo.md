@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.5, 2026-11-13 |
+| Versión | 1.6, 2026-11-13 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
@@ -145,7 +145,7 @@ La validación de servidor aplica a cualquier OC que tenga equipo, sin importar 
 
 | Requisito | Motivo |
 |---|---|
-| Tipo de búsqueda: Artículo o un subtipo de compra (por ejemplo, Otro cargo para la compra, que NetSuite reporta como `otherchargepurchase`) | Los tipos aceptados están en `TIPOS_BUSQUEDA_ARTICULO` de `lib/config.js`. Otro tipo se rechaza con MSG-05, y el detalle del error muestra el tipo encontrado; si es un subtipo de compra válido, se agrega a esa lista |
+| Tipo de búsqueda: Artículo o un subtipo de artículo (por ejemplo, Otro cargo para la compra, que NetSuite reporta como `otherchargepurchaseitem`) | El código no valida el tipo (D-S). El ID de cada fila se asigna al artículo nativo: una búsqueda de otro registro (cliente, transacción) daría IDs que podrían coincidir con artículos reales. Responsabilidad del administrador |
 | Primera columna: nombre para mostrar | Es la etiqueta de la opción |
 | El ID interno del artículo sale del resultado | No requiere columna de ID |
 | Criterios: Inactivo = No; tipo Otro cargo para la compra; subsidiaria del equipo; padres de matriz excluidos si aplica | Solo artículos capturables en la OC |
@@ -298,7 +298,7 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | D-O | El botón es un campo de HTML en línea que llama al Client Script con `require` | `form.addButton` solo coloca botones en las barras superior e inferior. El patrón no está documentado por Oracle (regla 19.7 del prompt) |
 | D-P | Nuevo mensaje MSG-09: "Seleccione un artículo del equipo." | El botón necesita un aviso cuando no hay artículo elegido |
 | D-Q | El Client Script tiene registro y despliegue propios en Orden de compra (`customscript_sads_mtn_cs_oc`), en lugar de adjuntarse con `clientScriptModulePath` | En sandbox, NetSuite cargó el módulo adjuntado pero nunca invocó `pageInit` ni `fieldChanged`; S-05 resultó falso en esta cuenta. Con el despliegue propio, la consola ya muestra `entrada validateField` y `entrada fieldChanged` |
-| D-R | La búsqueda se acepta si su tipo es Artículo o un subtipo de compra (`TIPOS_BUSQUEDA_ARTICULO`), no solo `item` | En sandbox, las búsquedas de los equipos son de tipo `otherchargepurchase` y se rechazaban con `MTTO_BUSQUEDA_INVALIDA` |
+| D-S | No se valida el tipo de la búsqueda guardada (el prompt pedía rechazar búsquedas que no fueran de Artículo, RN-07 y sección 13.3) | Decisión del usuario: las búsquedas ya filtran por tipo de artículo. En sandbox, NetSuite reporta las búsquedas como `otherchargepurchaseitem` y la validación las rechazaba |
 | C-02 | `prepararSeleccion` acepta bitácora opcional y equipo ya leído | Advertencia solo en servidor; evita una segunda lectura del equipo |
 | C-04 | MSG-05 con equipo inexistente muestra el ID (servidor) o el texto del campo (pantalla) | No hay nombre que mostrar |
 | C-05 | `inactivo` se lee y no se usa | Ninguna regla lo consume |
@@ -342,7 +342,7 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | R-17 | En estado Pruebas, los scripts solo corren para el propietario | Comportamiento estándar de despliegues en Pruebas | Otros usuarios no ven el selector ni el botón funcional hasta pasar a Liberado | Probar con el propietario; liberar en el paso 8 |
 | R-18 | El objeto SDF `clientscript` no se validó contra el servidor | Red de desarrollo sin acceso a NetSuite | Error de esquema en el paso 1 | `project:validate --server` antes de desplegar |
 | R-19 | Permisos de búsqueda o de registro insuficientes para el rol que abre la OC | `search.load` y `lookupFields` corren con el rol del usuario | Selector vacío y MSG-05 | Registro en nivel Error con usuario, rol y detalle; sección 5.5 |
-| R-20 | Las cadenas de tipo distintas de `item` y `otherchargepurchase` no están verificadas | Supuesto S-20 | Una búsqueda de otro subtipo de compra se rechaza con MSG-05 | El detalle del error muestra el tipo; agregarlo a `TIPOS_BUSQUEDA_ARTICULO` |
+| R-20 | Una búsqueda que no sea de artículos se acepta sin aviso | D-S: sin validación de tipo | Sus IDs llenarían el selector y el conjunto permitido; un ID que coincida con un artículo real permitiría comprarlo | Contrato de búsqueda (sección 5.3); revisar cada búsqueda nueva antes de asignarla a un equipo |
 
 ## 13. Supuestos y fuentes
 
@@ -364,6 +364,6 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | S-17 | Límite de 40 caracteres por ID de objeto; el más largo usa 34 | Paso 1 |
 | S-18 | `items` es el ID de la pestaña Artículos de la OC y admite campos de script como contenedor | SB-16 |
 | S-19 | `require` con la ruta absoluta del Client Script resuelve el módulo desde el HTML del botón | Verificado en sandbox (2026-11-13): la consola registró `entrada agregarArticuloSeleccionado` |
-| S-20 | Los tipos de `TIPOS_BUSQUEDA_ARTICULO` corresponden a los valores de `searchType` de NetSuite | Verificado solo `otherchargepurchase` (sandbox, 2026-11-13); los demás se confirman al usarlos |
+| S-20 | Las búsquedas de los equipos solo devuelven artículos | Responsabilidad del administrador (D-S) |
 
 Fuentes: prompt v1 y planes de ejecución en `planes/`; documentación de Oracle de `N/search`, `N/currentRecord` (`Field.insertSelectOption`, `Field.removeSelectOption`, `currentRecord.get`) y `N/ui/serverWidget` (`Form.addField`, `Field.addSelectOption`, `Field.updateLayoutType`).

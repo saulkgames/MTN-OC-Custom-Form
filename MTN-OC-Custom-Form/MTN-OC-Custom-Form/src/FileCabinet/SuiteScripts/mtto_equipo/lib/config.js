@@ -50,31 +50,6 @@ define([], () => {
         MAX_RESULTADOS_BUSQUEDA: 1000
     });
 
-    /**
-     * Tipos de búsqueda guardada aceptados (searchType en minúsculas): artículo genérico y subtipos que se compran en una OC.
-     * Verificado en sandbox: 'otherchargepurchase' (Otro cargo para la compra). Los demás son supuestos (S-20).
-     * Si una búsqueda válida se rechaza, el detalle del error muestra su tipo; agréguelo aquí.
-     * Se excluyen subtipos de venta y artículos que no se compran: sus IDs no deben llegar al artículo nativo.
-     */
-    const TIPOS_BUSQUEDA_ARTICULO = Object.freeze([
-        'item',
-        'otherchargepurchase',
-        'otherchargeitem',
-        'otherchargeresale',
-        'noninventoryitem',
-        'noninventorypurchase',
-        'noninventoryresale',
-        'serviceitem',
-        'servicepurchase',
-        'serviceresale',
-        'inventoryitem',
-        'assemblyitem',
-        'lotnumberedinventoryitem',
-        'serializedinventoryitem',
-        'lotnumberedassemblyitem',
-        'serializedassemblyitem'
-    ]);
-
     /** Valor de la opción vacía del selector; un espacio para no depender de opciones con valor vacío. */
     const SELECTOR = Object.freeze({
         VALOR_VACIO: ' '
@@ -146,7 +121,6 @@ define([], () => {
         ESTANDAR,
         ETIQUETAS,
         LIMITES,
-        TIPOS_BUSQUEDA_ARTICULO,
         SELECTOR,
         RUTAS,
         DIAGNOSTICO,
