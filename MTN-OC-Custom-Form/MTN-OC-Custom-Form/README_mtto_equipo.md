@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.8, 2026-11-14 |
+| Versión | 1.9, 2026-11-14 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
@@ -137,6 +137,7 @@ Revisiones después del paso 2:
 
 No volver a ejecutar `suitecloud project:adddependencies` contra sandbox antes de desplegar en producción. Agrega dependencias a objetos que solo existen en sandbox (por ejemplo, roles o campos de otras soluciones referenciados por el formulario), y `project:validate` falla con "El manifiesto contiene una dependencia en el objeto ..., pero no está en la cuenta".
 Si el formulario se vuelve a exportar de sandbox, quitar de su XML los roles y campos que no existan en producción, y sus dependencias del manifest.
+También quitar `<mandatory>` de los campos ocultos de otras soluciones cuyo obligatorio está bloqueado en producción. Si no se quita, `project:deploy` falla con "El valor de mandatory del objeto ... no se puede modificar" (en la versión 1.9 se quitó en 15 campos: `custbody_fam_lp_*`, `custbody_transferrec_date`, `custbody_serie_aph`, `custbody_freigth_service_terms`, `custbodydrt_impuesto_aduana`, `custbody_numtotalmercs_alm`, `custbody_sads_edocuments_package`).
 
 ## 5. Configuración manual
 

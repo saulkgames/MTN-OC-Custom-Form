@@ -415,7 +415,6 @@
           <id>[scriptid=custbody_fam_lp_company]</id>
           <label>Empresa de arrendamiento</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -442,7 +441,6 @@
           <id>[scriptid=custbody_fam_lp_startdate]</id>
           <label>Fecha de inicio del arrendamiento</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -551,7 +549,6 @@
           <id>[scriptid=custbody_fam_lp_rentalfreq]</id>
           <label>Frecuencia del arrendamiento</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -560,7 +557,6 @@
           <id>[scriptid=custbody_fam_lp_term]</id>
           <label>Plazo de arrendamiento</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -569,7 +565,6 @@
           <id>[scriptid=custbody_fam_lp_annualrate]</id>
           <label>Tasa de interés anual</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -578,7 +573,6 @@
           <id>[scriptid=custbody_fam_lp_enddate]</id>
           <label>Fecha de finalización del arrendamiento</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -888,7 +882,6 @@
           <id>[scriptid=custbody_transferrec_date]</id>
           <label>FECHA REGISTRO</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -1007,7 +1000,6 @@
           <id>[scriptid=custbody_serie_aph]</id>
           <label>APH Serie</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -1155,7 +1147,6 @@
           <id>[scriptid=custbody_freigth_service_terms]</id>
           <label>Terminos de Entrega</label>
           <visible>F</visible>
-          <mandatory>F</mandatory>
           <displayType>NORMAL</displayType>
           <columnBreak>F</columnBreak>
           <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4075,7 +4066,6 @@
               <id>[scriptid=custbodydrt_impuesto_aduana]</id>
               <label>Impuesto aduana</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4412,7 +4402,6 @@
               <id>[scriptid=custbody_numtotalmercs_alm]</id>
               <label>Numero Total de Mercancias</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4714,7 +4703,6 @@
               <id>[scriptid=custbody_sads_edocuments_package]</id>
               <label>Paquete de Electronic Documents</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4967,7 +4955,6 @@
               <id>[scriptid=custbody_fam_lp_rightofuse]</id>
               <label>Activo con derecho a uso</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4976,7 +4963,6 @@
               <id>[scriptid=custbody_fam_lp_leaseliability]</id>
               <label>Pasivo por arrendamiento</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
@@ -4985,7 +4971,6 @@
               <id>[scriptid=custbody_fam_lp_intexpense]</id>
               <label>Gastos de intereses</label>
               <visible>F</visible>
-              <mandatory>F</mandatory>
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
