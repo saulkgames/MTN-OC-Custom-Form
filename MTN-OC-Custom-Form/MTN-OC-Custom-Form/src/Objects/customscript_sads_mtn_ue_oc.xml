@@ -20,7 +20,6 @@
             <loglevel>ERROR</loglevel>
             <recordtype>PURCHASEORDER</recordtype>
             <status>TESTING</status>
-            <title>SADS MTN Equipo en Orden de compra</title>
         </scriptdeployment>
     </scriptdeployments>
 </usereventscript>

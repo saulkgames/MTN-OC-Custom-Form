@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.7, 2026-11-13 |
+| Versión | 1.8, 2026-11-14 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
@@ -123,6 +123,20 @@ Revisiones después del paso 2:
 | Aplicación del campo de cabecera | `custbody_sads_mtn_equipo`, pestaña Aplica a | Compras; el campo puede verse en otras transacciones de compra y debe ocultarse en sus formularios |
 | Parámetro retirado | Script `customscript_sads_mtn_ue_oc`, pestaña Parámetros | `custscript_sads_mtn_item_temporal` ya no se usa. Si SDF no lo borró, se puede borrar a mano; sin uso no tiene efecto |
 | Artículo temporal | Artículo "NO USAR - LÍNEA TEMPORAL", si se creó en la versión 1.2 | Inactivarlo; ya no se usa |
+
+### 4.1 Despliegue a producción
+
+| Va por SDF (`src/Objects/`) | Se hace a mano después |
+|---|---|
+| Registro Equipo, campo de cabecera, los dos scripts y sus despliegues | Capturar el ID interno del formulario `custform_sads_mtn_form` en producción en `custscript_sads_mtn_form_id` (el ID cambia por ambiente) |
+| Formulario `custform_sads_mtn_form` | Crear el enlace de menú "Ordenes de Mantenimiento" con URL relativa `/app/accounting/transactions/purchord.nl?cf=<ID de producción>` y agregarlo a la categoría de compras del centro (D-T) |
+| Búsquedas `customsearch_sads_mtn_*` | Cargar los equipos con `ListadeEquipodetransporte.csv` (Importación CSV del registro "Equipo de transporte"). La búsqueda se referencia por ID de script, así que funciona igual en producción |
+| — | Cambiar ambos despliegues de Pruebas a Liberado (el XML los instala en Pruebas) |
+
+`referencia_sandbox/` guarda el enlace y la categoría exportados de sandbox. Solo son referencia y no se despliegan: el enlace apunta a la URL y al formulario del sandbox, y la categoría reemplazaría la de compras de producción.
+
+No volver a ejecutar `suitecloud project:adddependencies` contra sandbox antes de desplegar en producción. Agrega dependencias a objetos que solo existen en sandbox (por ejemplo, roles o campos de otras soluciones referenciados por el formulario), y `project:validate` falla con "El manifiesto contiene una dependencia en el objeto ..., pero no está en la cuenta".
+Si el formulario se vuelve a exportar de sandbox, quitar de su XML los roles y campos que no existan en producción, y sus dependencias del manifest.
 
 ## 5. Configuración manual
 
@@ -299,6 +313,7 @@ El registro Equipo y el campo de cabecera pueden quedarse sin efecto operativo.
 | D-P | Nuevo mensaje MSG-09: "Seleccione un artículo del equipo." | El botón necesita un aviso cuando no hay artículo elegido |
 | D-Q | El Client Script tiene registro y despliegue propios en Orden de compra (`customscript_sads_mtn_cs_oc`), en lugar de adjuntarse con `clientScriptModulePath` | En sandbox, NetSuite cargó el módulo adjuntado pero nunca invocó `pageInit` ni `fieldChanged`; S-05 resultó falso en esta cuenta. Con el despliegue propio, la consola ya muestra `entrada validateField` y `entrada fieldChanged` |
 | D-S | No se valida el tipo de la búsqueda guardada (el prompt pedía rechazar búsquedas que no fueran de Artículo, RN-07 y sección 13.3) | Decisión del usuario: las búsquedas ya filtran por tipo de artículo. En sandbox, NetSuite reporta las búsquedas como `otherchargepurchaseitem` y la validación las rechazaba |
+| D-T | Enlace de menú y categoría de centro exportados de sandbox fuera del despliegue (`referencia_sandbox/`); se crean a mano en cada ambiente. Del formulario se quitaron el rol `customrole_mcp_claude_rol_1` y los campos `custbody_chbs_cleared` y `custbody_whoutlet_relationship` | No existen en producción y hacían fallar la validación. El enlace apuntaba al sandbox y la categoría reemplazaría la de producción |
 | C-02 | `prepararSeleccion` acepta bitácora opcional y equipo ya leído | Advertencia solo en servidor; evita una segunda lectura del equipo |
 | C-04 | MSG-05 con equipo inexistente muestra el ID (servidor) o el texto del campo (pantalla) | No hay nombre que mostrar |
 | C-05 | `inactivo` se lee y no se usa | Ninguna regla lo consume |

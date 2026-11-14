@@ -4463,15 +4463,6 @@
               <sameRowAsPrevious>F</sameRowAsPrevious>
             </field>
             <field>
-              <id>[scriptid=custbody_whoutlet_relationship]</id>
-              <label>Salida de Almacen Relacionada</label>
-              <visible>F</visible>
-              <mandatory>F</mandatory>
-              <displayType>INLINETEXT</displayType>
-              <columnBreak>F</columnBreak>
-              <sameRowAsPrevious>F</sameRowAsPrevious>
-            </field>
-            <field>
               <id>[scriptid=custbody_cust_serv_lvl]</id>
               <label>Descuento por Nivel de servicio </label>
               <visible>F</visible>
@@ -4488,16 +4479,6 @@
               <displayType>NORMAL</displayType>
               <columnBreak>F</columnBreak>
               <sameRowAsPrevious>F</sameRowAsPrevious>
-            </field>
-            <field>
-              <id>[scriptid=custbody_chbs_cleared]</id>
-              <label>CHBS - Transaccion conciliada </label>
-              <visible>F</visible>
-              <mandatory>F</mandatory>
-              <displayType>NORMAL</displayType>
-              <columnBreak>F</columnBreak>
-              <sameRowAsPrevious>F</sameRowAsPrevious>
-              <checkBoxDefault>USE_FIELD_DEFAULT</checkBoxDefault>
             </field>
           </fields>
         </defaultFieldGroup>
@@ -6570,10 +6551,6 @@
     </role>
     <role>
       <id>[scriptid=customrole1064]</id>
-      <preferred>F</preferred>
-    </role>
-    <role>
-      <id>[scriptid=customrole_mcp_claude_rol_1]</id>
       <preferred>F</preferred>
     </role>
     <role>

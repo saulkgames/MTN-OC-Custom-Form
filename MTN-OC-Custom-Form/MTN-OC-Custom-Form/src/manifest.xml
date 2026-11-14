@@ -125,7 +125,6 @@
       <object>custbody_drt_custbody_mx_cfdi_signatur</object>
       <object>customrole1024</object>
       <object>custcol_drt_cs_serie_folio</object>
-      <object>custlink_14_5490848_888</object>
       <object>custbody_15529_vendor_entity_bank</object>
       <object>custbody_drt_tran_cuadre_caja</object>
       <object>customrole1029</object>
@@ -141,8 +140,6 @@
       <object>custbody_fam_lp_intexpense</object>
       <object>customrole1038</object>
       <object>custbody_drt_fecha_certificacion</object>
-      <object>custlink_mtn_form</object>
-      <object>customrole_mcp_claude_rol_1</object>
       <object>custbody_alm_transportistaext_nombre</object>
       <object>customrole1036</object>
       <object>custbody_mx_operation_type</object>
@@ -177,7 +174,6 @@
       <object>custbody_drt_nc_identificador_novacaja</object>
       <object>custtab_16_3776644_208</object>
       <object>custcol_drt_cp_fabricante</object>
-      <object>custbody_whoutlet_relationship</object>
       <object>customrole1043</object>
       <object>custcolalm_articulo_preciounitario</object>
       <object>custbody_psg_ei_pdf</object>
@@ -221,7 +217,6 @@
       <object>customrole1064</object>
       <object>custbodydrt</object>
       <object>customrole1081</object>
-      <object>custbody_chbs_cleared</object>
       <object>custbody_psg_ei_certified_edoc</object>
       <object>custbody_fam_lp_gainonmod</object>
       <object>custbodydrt_forma_pago</object>
@@ -302,7 +297,6 @@
       <object>custbody_radi_oyster_ap_project</object>
       <object>custbody_drt_cp_entradasalidamerc</object>
       <object>custcol_drt_uuid</object>
-      <object>custlink_3_5490848_734</object>
       <object>custtab_5_4346073_208</object>
       <object>custcol_precio_cotizacion</object>
       <object>custbody_mx_cfdi_payment_signature</object>
@@ -339,7 +333,6 @@
       <object>custbody_serie_aph</object>
       <object>custbody_url_upload_nas_2</object>
       <object>custcol_drt_cp_embalaje</object>
-      <object>custlink_2_5490848_247</object>
       <object>custbody_mx_cfdi_certify_timestamp</object>
       <object>custbodyal_dir_consignacion_compra</object>
       <object>custbody_response_body_image</object>
@@ -558,7 +551,6 @@
       <object>custcol_drt_costounidadtransaccion</object>
       <object>customlist200</object>
       <object>custbody_wmsse_thirdpartyaccountnumber</object>
-      <object>custlink_1_5490848_845</object>
       <object>custbody_sii_invoice_date</object>
       <object>custcol_margen_estandar</object>
       <object>custbody_mx_bank_acct_num</object>
@@ -569,7 +561,6 @@
       <object>custcol_drt_cp_obj_componentes</object>
       <object>customrole_wmsse_warehouse</object>
       <object>custbody_sads_fama_cpago_payload</object>
-      <object>custlink_13_5490848_232</object>
       <object>custbody_fam_lp_term</object>
       <object>custcol_mx_txn_line_sat_item_code</object>
       <object>custbody_fam_specdeprjrn_limit</object>
