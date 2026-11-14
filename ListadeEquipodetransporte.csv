@@ -1,0 +1,63 @@
+ID interno,Nombre,ID,Búsqueda guardada,Subsidiaria
+1,CHEVROLET 21,1,customsearch_sads_mtn_ch21_ls,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+2,DINA 06,2,customsearch_sads_mtn_di06_ls,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+3,DINA 08,3,customsearch_sads_mtn_di08_ls,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+4,DOBLE RODADO DISEL 4,4,customsearch_sads_mtn_db04rc_ls,Empresa principal : ACEROS DE GUASAVE
+5,DOBLE RODADO FORD 1,5,customsearch_sads_mtn_df01ag_ls,Empresa principal : ACEROS DE GUASAVE
+6,DOBLE RODADO FORD 2,6,customsearch_sads_mtn_df02ag_ls,Empresa principal : ACEROS DE GUASAVE
+7,DOBLE RODADO 1003,7,customsearch_sads_mtn_db1003nh_ls,Empresa principal : NH Aceros
+8,DOMPE 27,8,customsearch_sads_mtn_fd27,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+9,FORD 10,9,customsearch_sads_mtn_fo10,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+10,GRUA VIAJERA AGU,10,customsearch_sads_mtn_gvagu,Empresa principal : ACEROS DE GUASAVE
+11,GRUA VIAJERA PFP 1A,11,customsearch_sads_mtn_gva1a,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+12,GRUA VIAJERA PFP 2A,12,customsearch_sads_mtn_gva2a,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+13,GRUA VIAJERA PFP 2B,13,customsearch_sads_mtn_gva2B,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+14,GRUA VIAJERA PFP 3A,14,customsearch_sads_mtn_gva3A,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+15,GRUA 09,15,customsearch_sads_mtn_gR09,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+16,GRUA 11,16,customsearch_sads_mtn_gR11,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+17,GRUA 14,17,customsearch_sads_mtn_gr14,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+18,HINO 02,18,customsearch_sads_mtn_HI02,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+19,HINO 1009,19,customsearch_sads_mtn_hi1009nh,Empresa principal : NH Aceros
+20,HINO 13 PFP,20,customsearch_sads_mtn_hi13,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+21,HINO 13 NH,21,customsearch_sads_mtn_hi13,Empresa principal : NH Aceros
+22,HINO 19,22,customsearch_sads_mtn_hi19,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+23,HINO 21,23,customsearch_sads_mtn_hi21,Empresa principal : ACEROS DE GUASAVE
+24,INTERNACIONAL 1006,24,customsearch_sads_mtn_in1006nh,Empresa principal : NH Aceros
+25,INTERNACIONAL 1006 PFP,25,customsearch_sads_mtn_in1006nh,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+26,INTERNACIONAL 13,26,customsearch_sads_mtn_KN13AG,Empresa principal : ACEROS DE GUASAVE
+27,INTERNACIONAL 18,27,customsearch_sads_mtn_KN18AG,Empresa principal : ACEROS DE GUASAVE
+28,ITALIKA 03,28,customsearch_sads_mtn_IT03AG,Empresa principal : ACEROS DE GUASAVE
+29,ITALIKA 12,29,customsearch_sads_mtn_it12,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+30,JAULA CHAPA,30,customsearch_sads_mtn_jc00,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+31,KANGOO 03,31,customsearch_sads_mtn_ka03,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+32,KENWORTH GRUA 14,32,customsearch_sads_mtn_kg14ag,Empresa principal : ACEROS DE GUASAVE
+33,KENWORTH 10,33,customsearch_sads_mtn_kn10,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+34,KENWORTH 08,34,customsearch_sads_mtn_kn08AG,Empresa principal : ACEROS DE GUASAVE
+35,MALIBU GRIS,35,customsearch_sads_mtn_mg00,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+36,MITSUBISHI,36,customsearch_sads_mtn_mi00,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+37,MONTA CARGA CLARK,37,customsearch_sads_mtn_mncaag,Empresa principal : ACEROS DE GUASAVE
+38,MONTA CARGA ELECTRICO,38,customsearch_sads_mtn_mnel,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+39,MONTA CARGA VFIT,39,customsearch_sads_mtn_mnvfag,Empresa principal : ACEROS DE GUASAVE
+40,MONTACARGAS GAS,40,customsearch_sads_mtn_mngs,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+41,NISSAN 04,41,customsearch_sads_mtn_ni04,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+42,NISSAN 09,42,customsearch_sads_mtn_ni09,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+43,NISSAN 1002 NH,43,customsearch_sads_mtn_ni1002nh,Empresa principal : NH Aceros
+44,NISSAN 1004 NH,44,customsearch_sads_mtn_ni1004nh,Empresa principal : NH Aceros
+45,NISSAN 1005 NH,45,customsearch_sads_mtn_ni1005nh,Empresa principal : NH Aceros
+46,HONDA ODISSEY NH,46,customsearch_sads_mtn_hd00nh,Empresa principal : NH Aceros
+47,HILUX 23  AGU,47,customsearch_sads_mtn_ty23ag,Empresa principal : ACEROS DE GUASAVE
+48,HILUX PFP,48,customsearch_sads_mtn_ty00,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+49,SILVERADO,49,customsearch_sads_mtn_si17,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+50,SIENNA,50,customsearch_sads_mtn_sn00,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+51,PRIUS TINTO AGU,51,customsearch_sads_mtn_prtiag,Empresa principal : ACEROS DE GUASAVE
+52,PRIUS ROJO,52,customsearch_sads_mtn_pr01,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+53,PRIUS PLATA,53,customsearch_sads_mtn_prplag,Empresa principal : ACEROS DE GUASAVE
+54,PRIUS BLANCO 05,54,customsearch_sads_mtn_pr05,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+55,NISSAN 22 AGU,55,customsearch_sads_mtn_ni22ag,Empresa principal : ACEROS DE GUASAVE
+56,NISSAN 20 AGU,56,customsearch_sads_mtn_ni20ag,Empresa principal : ACEROS DE GUASAVE
+57,NISSAN 19 AGU,57,customsearch_sads_mtn_ni19ag,Empresa principal : ACEROS DE GUASAVE
+58,NISSAN 18,58,customsearch_sads_mtn_ni18,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+59,NISSAN 17 AGU,59,customsearch_sads_mtn_ni17rc,Empresa principal : ACEROS DE GUASAVE
+60,NISSAN 15 AGU,60,customsearch_sads_mtn_ni15rc,Empresa principal : ACEROS DE GUASAVE
+61,NISSAN 15 PFP,61,customsearch_sads_mtn_ni15,Empresa principal : PROVEEDORA DE FIERRO Y PERFILES
+62,NISSAN 14 AGU,62,customsearch_sads_mtn_ni14rc,Empresa principal : ACEROS DE GUASAVE
