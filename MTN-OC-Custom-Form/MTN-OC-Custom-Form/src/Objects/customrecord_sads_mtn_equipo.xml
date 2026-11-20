@@ -125,4 +125,378 @@
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_9194231_5490848_837">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ch21_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>CHEVROLET 21</name>
+    </instance>
+    <instance scriptid="val_9194232_5490848_600">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_di06_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DINA 06</name>
+    </instance>
+    <instance scriptid="val_9194233_5490848_790">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_di08_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DINA 08</name>
+    </instance>
+    <instance scriptid="val_9194234_5490848_442">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_db04rc_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DOBLE RODADO DISEL 4</name>
+    </instance>
+    <instance scriptid="val_9194235_5490848_534">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_df01ag_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DOBLE RODADO FORD 1</name>
+    </instance>
+    <instance scriptid="val_9194236_5490848_169">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_df02ag_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DOBLE RODADO FORD 2</name>
+    </instance>
+    <instance scriptid="val_9194237_5490848_472">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_db1003nh_ls</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DOBLE RODADO 1003</name>
+    </instance>
+    <instance scriptid="val_9194238_5490848_997">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_fd27</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>DOMPE 27</name>
+    </instance>
+    <instance scriptid="val_9194239_5490848_662">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_fo10</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>FORD 10</name>
+    </instance>
+    <instance scriptid="val_9194240_5490848_398">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gvagu</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA VIAJERA AGU</name>
+    </instance>
+    <instance scriptid="val_9194241_5490848_151">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gva1a</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA VIAJERA PFP 1A</name>
+    </instance>
+    <instance scriptid="val_9194242_5490848_866">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gva2a</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA VIAJERA PFP 2A</name>
+    </instance>
+    <instance scriptid="val_9194243_5490848_709">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gva2B</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA VIAJERA PFP 2B</name>
+    </instance>
+    <instance scriptid="val_9194244_5490848_299">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gva3A</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA VIAJERA PFP 3A</name>
+    </instance>
+    <instance scriptid="val_9194245_5490848_350">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gR09</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA 09</name>
+    </instance>
+    <instance scriptid="val_9194246_5490848_844">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gR11</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA 11</name>
+    </instance>
+    <instance scriptid="val_9194247_5490848_455">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_gr14</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>GRUA 14</name>
+    </instance>
+    <instance scriptid="val_9194248_5490848_810">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_HI02</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 02</name>
+    </instance>
+    <instance scriptid="val_9194249_5490848_697">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hi1009nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 1009</name>
+    </instance>
+    <instance scriptid="val_9194250_5490848_833">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hi13</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 13 PFP</name>
+    </instance>
+    <instance scriptid="val_9194251_5490848_469">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hi13</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 13 NH</name>
+    </instance>
+    <instance scriptid="val_9194252_5490848_287">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hi19</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 19</name>
+    </instance>
+    <instance scriptid="val_9194253_5490848_445">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hi21</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HINO 21</name>
+    </instance>
+    <instance scriptid="val_9194254_5490848_459">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_in1006nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>INTERNACIONAL 1006</name>
+    </instance>
+    <instance scriptid="val_9194255_5490848_221">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_in1006nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>INTERNACIONAL 1006 PFP</name>
+    </instance>
+    <instance scriptid="val_9194256_5490848_183">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_KN13AG</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>INTERNACIONAL 13</name>
+    </instance>
+    <instance scriptid="val_9194257_5490848_519">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_KN18AG</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>INTERNACIONAL 18</name>
+    </instance>
+    <instance scriptid="val_9194258_5490848_357">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_IT03AG</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>ITALIKA 03</name>
+    </instance>
+    <instance scriptid="val_9194259_5490848_611">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_it12</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>ITALIKA 12</name>
+    </instance>
+    <instance scriptid="val_9194260_5490848_346">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_jc00</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>JAULA CHAPA</name>
+    </instance>
+    <instance scriptid="val_9194261_5490848_729">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ka03</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>KANGOO 03</name>
+    </instance>
+    <instance scriptid="val_9194262_5490848_294">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_kg14ag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>KENWORTH GRUA 14</name>
+    </instance>
+    <instance scriptid="val_9194263_5490848_192">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_kn10</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>KENWORTH 10</name>
+    </instance>
+    <instance scriptid="val_9194264_5490848_321">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_kn08AG</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>KENWORTH 08</name>
+    </instance>
+    <instance scriptid="val_9194265_5490848_970">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mg00</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MALIBU GRIS</name>
+    </instance>
+    <instance scriptid="val_9194266_5490848_797">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mi00</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MITSUBISHI</name>
+    </instance>
+    <instance scriptid="val_9194267_5490848_935">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mncaag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MONTA CARGA CLARK</name>
+    </instance>
+    <instance scriptid="val_9194268_5490848_121">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mnel</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MONTA CARGA ELECTRICO</name>
+    </instance>
+    <instance scriptid="val_9194269_5490848_175">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mnvfag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MONTA CARGA VFIT</name>
+    </instance>
+    <instance scriptid="val_9194270_5490848_341">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_mngs</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>MONTACARGAS GAS</name>
+    </instance>
+    <instance scriptid="val_9194271_5490848_395">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni04</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 04</name>
+    </instance>
+    <instance scriptid="val_9194272_5490848_511">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni09</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 09</name>
+    </instance>
+    <instance scriptid="val_9194273_5490848_466">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni1002nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 1002 NH</name>
+    </instance>
+    <instance scriptid="val_9194274_5490848_133">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni1004nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 1004 NH</name>
+    </instance>
+    <instance scriptid="val_9194275_5490848_464">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni1005nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 1005 NH</name>
+    </instance>
+    <instance scriptid="val_9194276_5490848_591">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_hd00nh</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HONDA ODISSEY NH</name>
+    </instance>
+    <instance scriptid="val_9194277_5490848_834">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ty23ag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HILUX 23  AGU</name>
+    </instance>
+    <instance scriptid="val_9194278_5490848_251">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ty00</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>HILUX PFP</name>
+    </instance>
+    <instance scriptid="val_9194279_5490848_637">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_si17</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>SILVERADO</name>
+    </instance>
+    <instance scriptid="val_9194280_5490848_323">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_sn00</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>SIENNA</name>
+    </instance>
+    <instance scriptid="val_9194281_5490848_323">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_prtiag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>PRIUS TINTO AGU</name>
+    </instance>
+    <instance scriptid="val_9194282_5490848_310">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_pr01</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>PRIUS ROJO</name>
+    </instance>
+    <instance scriptid="val_9194283_5490848_696">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_prplag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>PRIUS PLATA</name>
+    </instance>
+    <instance scriptid="val_9194284_5490848_544">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_pr05</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>PRIUS BLANCO 05</name>
+    </instance>
+    <instance scriptid="val_9194285_5490848_192">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni22ag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 22 AGU</name>
+    </instance>
+    <instance scriptid="val_9194286_5490848_489">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni20ag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 20 AGU</name>
+    </instance>
+    <instance scriptid="val_9194287_5490848_407">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni19ag</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 19 AGU</name>
+    </instance>
+    <instance scriptid="val_9194288_5490848_137">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni18</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 18</name>
+    </instance>
+    <instance scriptid="val_9194289_5490848_232">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni17rc</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 17 AGU</name>
+    </instance>
+    <instance scriptid="val_9194290_5490848_539">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni15rc</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 15 AGU</name>
+    </instance>
+    <instance scriptid="val_9194291_5490848_923">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni15</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 15 PFP</name>
+    </instance>
+    <instance scriptid="val_9194292_5490848_290">
+      <custrecord_sads_mtn_eq_busqueda>customsearch_sads_mtn_ni14rc</custrecord_sads_mtn_eq_busqueda>
+      <custrecord_sads_mtn_eq_subsidiaria>[ACCOUNT_SPECIFIC_VALUE]</custrecord_sads_mtn_eq_subsidiaria>
+      <isinactive>F</isinactive>
+      <name>NISSAN 14 AGU</name>
+    </instance>
+  </instances>
 </customrecordtype>

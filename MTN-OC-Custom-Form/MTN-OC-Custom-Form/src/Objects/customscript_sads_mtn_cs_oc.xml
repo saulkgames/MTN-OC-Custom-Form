@@ -1,16 +1,26 @@
 <clientscript scriptid="customscript_sads_mtn_cs_oc">
-    <description>Selector de artículos por equipo de transporte en la Orden de compra: llena el selector, atiende el botón "Agregar artículo" y valida en pantalla. Solo actúa en el formulario exclusivo (donde el User Event agrega el selector).</description>
-    <isinactive>F</isinactive>
-    <name>SADS MTN Equipo en Orden de compra (CS)</name>
-    <notifyowner>T</notifyowner>
-    <scriptfile>[/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js]</scriptfile>
-    <scriptdeployments>
-        <scriptdeployment scriptid="customdeploy_sads_mtn_cs_oc">
-            <allroles>T</allroles>
-            <isdeployed>T</isdeployed>
-            <loglevel>ERROR</loglevel>
-            <recordtype>PURCHASEORDER</recordtype>
-            <status>TESTING</status>
-        </scriptdeployment>
-    </scriptdeployments>
+  <description>Selector de artículos por equipo de transporte en la Orden de compra: llena el selector, atiende el botón &quot;Agregar artículo&quot; y valida en pantalla. Solo actúa en el formulario exclusivo (donde el User Event agrega el selector).</description>
+  <isinactive>F</isinactive>
+  <name>SADS MTN Equipo en Orden de compra (CS)</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/mtto_equipo/cs_sads_mtn_oc.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_sads_mtn_cs_oc">
+      <allemployees>T</allemployees>
+      <alllocalizationcontexts>T</alllocalizationcontexts>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <audsubsidiary>[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]</audsubsidiary>
+      <eventtype></eventtype>
+      <executioncontext>ACTION|ADVANCEDREVREC|BANKCONNECTIVITY|BANKSTATEMENTPARSER|BUNDLEINSTALLATION|CLIENT|CONSOLRATEADJUSTOR|CSVIMPORT|CUSTOMGLLINES|CUSTOMMASSUPDATE|CUSTOMTOOL|DATASETBUILDER|DEBUGGER|EMAILCAPTURE|EVENTSUBSCRIBER|FICONNECTIVITY|FIPARSER|MAPREDUCE|OCRPLUGIN|OTHER|PAYMENTGATEWAY|PAYMENTPOSTBACK|PLATFORMEXTENSION|PORTLET|PROMOTIONS|RECORDACTION|RESTLET|RESTWEBSERVICES|SCHEDULED|SDFINSTALLATION|SHIPPINGPARTNERS|SUBSCRIBERSCRIPT|SUITELET|TAXCALCULATION|USEREVENT|USERINTERFACE|WEBSERVICES|WORKBOOKBUILDER|WORKFLOW</executioncontext>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <recordtype>PURCHASEORDER</recordtype>
+      <status>RELEASED</status>
+    </scriptdeployment>
+  </scriptdeployments>
 </clientscript>

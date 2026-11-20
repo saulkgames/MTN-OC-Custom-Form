@@ -1,25 +1,58 @@
 <usereventscript scriptid="customscript_sads_mtn_ue_oc">
-    <description>Filtra los artículos de la Orden de compra por el equipo de transporte de la cabecera. beforeLoad agrega el selector de artículos con su botón y bloquea el artículo nativo en el formulario exclusivo; beforeSubmit valida en todos los contextos.</description>
-    <isinactive>F</isinactive>
-    <name>SADS MTN Equipo en Orden de compra (UE)</name>
-    <notifyowner>T</notifyowner>
-    <scriptfile>[/SuiteScripts/mtto_equipo/ue_sads_mtn_oc.js]</scriptfile>
-    <scriptcustomfields>
-        <scriptcustomfield scriptid="custscript_sads_mtn_form_id">
-            <description>ID interno del formulario exclusivo de OC de mantenimiento en este ambiente.</description>
-            <fieldtype>INTEGER</fieldtype>
-            <help>Capture el ID interno del formulario personalizado de OC de mantenimiento. Vacío: la columna auxiliar no se agrega.</help>
-            <ismandatory>F</ismandatory>
-            <label>ID del formulario exclusivo</label>
-        </scriptcustomfield>
-    </scriptcustomfields>
-    <scriptdeployments>
-        <scriptdeployment scriptid="customdeploy_sads_mtn_ue_oc">
-            <allroles>T</allroles>
-            <isdeployed>T</isdeployed>
-            <loglevel>ERROR</loglevel>
-            <recordtype>PURCHASEORDER</recordtype>
-            <status>TESTING</status>
-        </scriptdeployment>
-    </scriptdeployments>
+  <description>Filtra los artículos de la Orden de compra por el equipo de transporte de la cabecera. beforeLoad agrega el selector de artículos con su botón y bloquea el artículo nativo en el formulario exclusivo; beforeSubmit valida en todos los contextos.</description>
+  <isinactive>F</isinactive>
+  <name>SADS MTN Equipo en Orden de compra (UE)</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/mtto_equipo/ue_sads_mtn_oc.js]</scriptfile>
+  <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_sads_mtn_form_id">
+      <accesslevel>2</accesslevel>
+      <aidescription></aidescription>
+      <applyformatting>T</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description>ID interno del formulario exclusivo de OC de mantenimiento en este ambiente.</description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <fieldtype>INTEGER</fieldtype>
+      <help>Capture el ID interno del formulario personalizado de OC de mantenimiento. Vacío: la columna auxiliar no se agrega.</help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <label>ID del formulario exclusivo</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <setting></setting>
+      <storevalue>T</storevalue>
+    </scriptcustomfield>
+  </scriptcustomfields>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_sads_mtn_ue_oc">
+      <allemployees>T</allemployees>
+      <alllocalizationcontexts>T</alllocalizationcontexts>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <audsubsidiary>[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]|[ACCOUNT_SPECIFIC_VALUE]</audsubsidiary>
+      <custscript_sads_mtn_form_id>382</custscript_sads_mtn_form_id>
+      <eventtype></eventtype>
+      <executioncontext>ACTION|ADVANCEDREVREC|BANKCONNECTIVITY|BANKSTATEMENTPARSER|BUNDLEINSTALLATION|CLIENT|CONSOLRATEADJUSTOR|CSVIMPORT|CUSTOMGLLINES|CUSTOMMASSUPDATE|CUSTOMTOOL|DATASETBUILDER|DEBUGGER|EMAILCAPTURE|EVENTSUBSCRIBER|FICONNECTIVITY|FIPARSER|MAPREDUCE|OCRPLUGIN|OTHER|PAYMENTGATEWAY|PAYMENTPOSTBACK|PLATFORMEXTENSION|PORTLET|PROMOTIONS|RECORDACTION|RESTLET|RESTWEBSERVICES|SCHEDULED|SDFINSTALLATION|SHIPPINGPARTNERS|SUBSCRIBERSCRIPT|SUITELET|TAXCALCULATION|USEREVENT|USERINTERFACE|WEBSERVICES|WORKBOOKBUILDER|WORKFLOW</executioncontext>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <recordtype>PURCHASEORDER</recordtype>
+      <runasrole></runasrole>
+      <status>RELEASED</status>
+    </scriptdeployment>
+  </scriptdeployments>
 </usereventscript>
