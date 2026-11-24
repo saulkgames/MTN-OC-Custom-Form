@@ -1,5 +1,5 @@
 <customrecordtype scriptid="customrecord_sads_mtn_equipo">
-  <accesstype>CUSTRECORDENTRYPERM</accesstype>
+  <accesstype>NONENEEDED</accesstype>
   <aidescription></aidescription>
   <allowattachments>T</allowattachments>
   <allowinlinedeleting>F</allowinlinedeleting>
