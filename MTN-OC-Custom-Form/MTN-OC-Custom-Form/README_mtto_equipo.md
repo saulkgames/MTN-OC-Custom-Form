@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.9, 2026-11-14 |
+| Versión | 1.10, 2026-11-24 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
@@ -39,7 +39,7 @@ Flujo al guardar: User Event → reglas y `datos.prepararSeleccion` → `N/searc
 
 | Objeto | ID | Configuración |
 |---|---|---|
-| Tipo de registro | `customrecord_sads_mtn_equipo` | "Equipo de transporte"; Nombre e Inactivo estándar; tipo de acceso vacío en el XML (ajuste del usuario para desplegar, commit `8abeb0b`): NetSuite aplica su valor predeterminado; revisarlo en el tipo de registro, campo Tipo de acceso |
+| Tipo de registro | `customrecord_sads_mtn_equipo` | "Equipo de transporte"; Nombre e Inactivo estándar; tipo de acceso `CUSTRECORDENTRYPERM` ("Requerir permiso de entradas de registros personalizados") desde el commit `2345d19`, importado de producción. Recomendado: "Usar lista de permisos" con los roles de captura en nivel Ver (sección 5.5) |
 | Campo del registro | `custrecord_sads_mtn_eq_busqueda` | Texto libre, obligatorio; ID de script de la búsqueda |
 | Campo del registro | `custrecord_sads_mtn_eq_subsidiaria` | Lista/registro Subsidiaria, obligatorio |
 | Campo de cabecera | `custbody_sads_mtn_equipo` | Lista/registro Equipo; aplica a compras; no obligatorio a nivel de campo; filtrado por subsidiaria de la transacción |
@@ -184,7 +184,7 @@ El nombre para mostrar debe ser único por convención interna; no se valida (ri
 
 | Rol | Permisos mínimos |
 |---|---|
-| Roles de captura (`ROLES_CAPTURA`) | Orden de compra crear y editar; artículos ver; "Equipo de transporte" ver; audiencia de las búsquedas |
+| Roles de captura (`ROLES_CAPTURA`) | Orden de compra crear y editar; artículos ver; "Equipo de transporte" ver (según el tipo de acceso del registro); audiencia de las búsquedas; restricción de subsidiarias que incluya la de los equipos y la de los artículos `MTN-*` |
 | Rol de configuración (`ROL_ADMIN_CONFIG`) | "Equipo de transporte" crear y editar; crear búsquedas públicas |
 
 El selector se llena con el rol del usuario que abre la OC, en el servidor (`beforeLoad`) y en el cliente.
@@ -197,6 +197,21 @@ Si falta un permiso, el selector queda vacío; el registro de ejecución del Use
 | Registro Equipo | Tipo de registro "Equipo de transporte", campo Tipo de acceso; y el rol de captura, pestaña Permisos | Según el tipo de acceso: con "Usar lista de permisos", el rol en la lista con nivel Ver; con "Requerir permiso de entradas de registros personalizados", ese permiso en el rol; con "Sin permiso requerido", nada |
 | Artículos | Rol de captura, pestaña Permisos > Listas | Artículos con nivel Ver o superior |
 | Valor de la búsqueda en el equipo | Registro Equipo, campo Búsqueda guardada | ID de script (`customsearch_...`) o ID interno de la búsqueda; no su título |
+| Restricción de subsidiarias del rol | Rol de captura, Restricciones de subsidiaria; y artículo `MTN-*`, campo Subsidiaria | El rol ve la subsidiaria de los artículos. Si no, la búsqueda devuelve 0 filas para ese rol y aparece MSG-05 (incidencia 2026-11-24) |
+
+Sin permiso sobre el registro Equipo, el usuario tampoco puede guardar una OC con equipo: `beforeSubmit` lee el equipo con el rol del usuario y rechaza con MSG-05.
+El registro de ejecución del User Event muestra `MTTO_EQUIPO_NO_ENCONTRADO` con usuario, rol y detalle `INSUFFICIENT_PERMISSION` (o el error que devuelva NetSuite).
+
+### 5.7 Funciones y despliegues requeridos
+
+| Revisión | Dónde | Requisito |
+|---|---|---|
+| Client SuiteScript | Configuración > Empresa > Habilitar funciones > SuiteCloud | Activa. Sin ella, `pageInit`, `validateField`, `fieldChanged`, `validateLine` y `saveRecord` no corren; el botón sí funciona porque carga el módulo con `require` |
+| Server SuiteScript | Misma ruta | Activa |
+| Despliegue `customdeploy_sads_mtn_cs_oc` | Scripting > Despliegues de script | Desplegado; Liberado; audiencia todos los roles; subsidiarias de la audiencia que incluyan las de los usuarios de captura |
+| Despliegue `customdeploy_sads_mtn_ue_oc` | Misma ruta | Mismos requisitos; parámetro `custscript_sads_mtn_form_id` con el ID de producción |
+
+Síntoma de un Client Script que no corre: el selector no se llena al elegir equipo, solo al pulsar "Agregar artículo", y al cambiar el equipo no aparece MSG-02 ni se borran las líneas (incidencia 2026-11-24).
 
 ### 5.6 Selector y botón "Agregar artículo"
 
@@ -270,9 +285,9 @@ Viene apagado (`DIAGNOSTICO.ACTIVO = false` en `lib/config.js`). Para diagnostic
 | Mensaje | Significado | Acción |
 |---|---|---|
 | Ningún mensaje `[sads_mtn]` | El navegador no carga el módulo, o el despliegue `customdeploy_sads_mtn_cs_oc` no corre para el usuario (estado Pruebas con otro usuario, o audiencia) | Revisar el despliegue de cliente; F12 > Red: `cs_sads_mtn_oc.js` y `lib/` con 200 |
-| `módulo cargado` sin `entrada pageInit` | NetSuite carga el módulo pero no invoca sus puntos de entrada | Revisar errores rojos sin filtro y el despliegue de cliente; el botón sigue funcionando porque no depende de `pageInit` |
+| `módulo cargado` sin `entrada pageInit` | NetSuite carga el módulo pero no invoca sus puntos de entrada | Revisar la función Client SuiteScript, errores rojos sin filtro y el despliegue de cliente (sección 5.7); el botón sigue funcionando porque no depende de `pageInit` |
 | `entrada <evento>` seguido de `error en <evento>` | El evento falla; el mensaje trae nombre, texto y pila | Corregir la línea indicada en la pila |
-| `carga de artículos: falla` o `carga de artículos desde el botón: falla` | La búsqueda o el equipo fallan; también aparece MSG-05. El detalle trae el error de NetSuite | Revisar permisos y el registro Equipo (sección 5.5) |
+| `carga de artículos: falla` o `carga de artículos desde el botón: falla` | La búsqueda o el equipo fallan; también aparece MSG-05. El detalle trae el error de NetSuite: `Lectura del equipo rechazada: INSUFFICIENT_PERMISSION` (rol sin acceso al registro Equipo), `Búsqueda ...: <error>` (búsqueda inexistente o inaccesible) o `no devolvió filas válidas para el rol` (restricción de subsidiarias) | Revisar permisos, subsidiarias y el registro Equipo (secciones 5.5 y 5.7) |
 | `selector llenado` con número de opciones | El selector se llenó desde el cliente | Ninguna |
 | `selector no disponible` | El campo del selector no existe en la página | Revisar la bitácora de `beforeLoad` |
 | Al pulsar el botón no aparece `entrada agregarArticuloSeleccionado` | El `require` del botón no encontró el módulo | Revisar `RUTAS.MODULO_CS` en `lib/config.js` contra la ruta real en el Gabinete de archivos |
@@ -358,6 +373,8 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | R-17 | En estado Pruebas, los scripts solo corren para el propietario | Comportamiento estándar de despliegues en Pruebas | Otros usuarios no ven el selector ni el botón funcional hasta pasar a Liberado | Probar con el propietario; liberar en el paso 8 |
 | R-18 | El objeto SDF `clientscript` no se validó contra el servidor | Red de desarrollo sin acceso a NetSuite | Error de esquema en el paso 1 | `project:validate --server` antes de desplegar |
 | R-19 | Permisos de búsqueda o de registro insuficientes para el rol que abre la OC | `search.load` y `lookupFields` corren con el rol del usuario | Selector vacío y MSG-05 | Registro en nivel Error con usuario, rol y detalle; sección 5.5 |
+| R-21 | Función Client SuiteScript desactivada, o despliegue de cliente sin audiencia para el usuario | `manifest.xml` no declara `CLIENTSUITESCRIPT` (I-08); SDF no lo exige | El selector no se llena al elegir equipo y el cambio de equipo no borra líneas; sin aviso por línea | Sección 5.7; el servidor sigue validando al guardar |
+| R-22 | Rol de captura sin permiso sobre el registro Equipo o sin la subsidiaria de los artículos | `lookupFields` y `search.load` corren con el rol del usuario, también en `beforeSubmit` | MSG-05 en pantalla y rechazo al guardar cualquier OC con equipo | Sección 5.5; detalle del error en bitácora y consola |
 | R-20 | Una búsqueda que no sea de artículos se acepta sin aviso | D-S: sin validación de tipo | Sus IDs llenarían el selector y el conjunto permitido; un ID que coincida con un artículo real permitiría comprarlo | Contrato de búsqueda (sección 5.3); revisar cada búsqueda nueva antes de asignarla a un equipo |
 
 ## 13. Supuestos y fuentes

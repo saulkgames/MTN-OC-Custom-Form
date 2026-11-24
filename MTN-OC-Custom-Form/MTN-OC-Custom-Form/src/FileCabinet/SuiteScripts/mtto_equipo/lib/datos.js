@@ -15,12 +15,15 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
     /**
      * Lee el registro Equipo en una sola lectura de campos (1 unidad).
      * @param {*} idEquipo ID interno del equipo
+     * @param {{detalle?: string}} [salida] Si se recibe, guarda en detalle la causa de la falla
+     *        (por ejemplo INSUFFICIENT_PERMISSION cuando el rol no tiene acceso al registro Equipo).
      * @returns {{id: string, nombre: string, idBusqueda: string, idSubsidiaria: string, inactivo: boolean}|null}
      *          Nulo si el registro no existe o no es accesible.
      */
-    function obtenerEquipo(idEquipo) {
+    function obtenerEquipo(idEquipo, salida) {
         const id = reglas.aTextoId(idEquipo);
         if (!id) {
+            anotarDetalle(salida, 'Equipo vacío.');
             return null;
         }
         let valores;
@@ -31,9 +34,12 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
                 columns: [ESTANDAR.FLD_EQ_NOMBRE, IDS.FLD_EQ_BUSQUEDA, IDS.FLD_EQ_SUBSIDIARIA, ESTANDAR.FLD_EQ_INACTIVO]
             });
         } catch (e) {
+            anotarDetalle(salida, 'Lectura del equipo rechazada: ' + describirError(e) +
+                '. Revise el permiso del rol sobre el registro Equipo de transporte.');
             return null;
         }
         if (!valores || Object.keys(valores).length === 0) {
+            anotarDetalle(salida, 'Lectura del equipo sin valores: registro inexistente o sin acceso para el rol.');
             return null;
         }
         return {
@@ -43,6 +49,22 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
             idSubsidiaria: valorDeSeleccion(valores[IDS.FLD_EQ_SUBSIDIARIA]),
             inactivo: valores[ESTANDAR.FLD_EQ_INACTIVO] === true
         };
+    }
+
+    function anotarDetalle(salida, detalle) {
+        if (salida && typeof salida === 'object') {
+            salida.detalle = detalle;
+        }
+    }
+
+    /** Nombre y texto de un error de NetSuite o de JavaScript. */
+    function describirError(e) {
+        if (!e) {
+            return 'desconocido';
+        }
+        const nombre = e.name || e.type || 'Error';
+        const mensaje = e.message || String(e);
+        return nombre + ': ' + mensaje;
     }
 
     /** lookupFields devuelve los campos de selección como [{ value, text }]. */
@@ -113,9 +135,11 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
      */
     function prepararSeleccion(idEquipo, opciones) {
         const ajustes = opciones || {};
-        const equipo = ajustes.equipo || obtenerEquipo(idEquipo);
+        const salidaEquipo = {};
+        const equipo = ajustes.equipo || obtenerEquipo(idEquipo, salidaEquipo);
         if (!equipo) {
-            return falla(CODIGOS.EQUIPO_NO_ENCONTRADO, reglas.aTextoId(idEquipo), null, 'Equipo inexistente o inaccesible.');
+            return falla(CODIGOS.EQUIPO_NO_ENCONTRADO, reglas.aTextoId(idEquipo), null,
+                salidaEquipo.detalle || 'Equipo inexistente o inaccesible.');
         }
         const nombreEquipo = equipo.nombre || equipo.id;
         if (reglas.esVacio(equipo.idBusqueda)) {
@@ -125,11 +149,12 @@ define(['N/search', './reglas', './config'], (search, reglas, config) => {
         try {
             filas = leerArticulosBusqueda(equipo.idBusqueda, ajustes);
         } catch (e) {
-            return falla(CODIGOS.BUSQUEDA_INVALIDA, nombreEquipo, equipo, (e && e.message) || String(e));
+            return falla(CODIGOS.BUSQUEDA_INVALIDA, nombreEquipo, equipo, 'Búsqueda ' + equipo.idBusqueda + ': ' + describirError(e));
         }
         const articulos = reglas.normalizarResultados(filas);
         if (!articulos.length) {
-            return falla(CODIGOS.BUSQUEDA_INVALIDA, nombreEquipo, equipo, 'La búsqueda no devolvió filas válidas.');
+            return falla(CODIGOS.BUSQUEDA_INVALIDA, nombreEquipo, equipo,
+                'La búsqueda ' + equipo.idBusqueda + ' no devolvió filas válidas para el rol (revise restricciones de subsidiaria del rol y de los artículos).');
         }
         return { exito: true, equipo, articulos };
     }

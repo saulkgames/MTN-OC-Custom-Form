@@ -205,11 +205,15 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
             }
 
             // 6. RN-07: el equipo debe existir.
-            const equipo = datos.obtenerEquipo(idEquipo);
+            const salidaEquipo = {};
+            const equipo = datos.obtenerEquipo(idEquipo, salidaEquipo);
             if (!equipo) {
                 log.error({
                     title: CODIGOS.EQUIPO_NO_ENCONTRADO,
-                    details: 'Equipo: ' + idEquipo + ' | Detalle: equipo inexistente o inaccesible.'
+                    details: 'Equipo: ' + idEquipo +
+                        ' | Usuario: ' + runtime.getCurrentUser().id + ' | Rol: ' + runtime.getCurrentUser().role +
+                        ' | Contexto: ' + runtime.executionContext +
+                        ' | Detalle: ' + (salidaEquipo.detalle || 'equipo inexistente o inaccesible.')
                 });
                 throw error.create({
                     name: CODIGOS.EQUIPO_NO_ENCONTRADO,
@@ -237,7 +241,9 @@ define(['N/ui/serverWidget', 'N/runtime', 'N/error', 'N/log', './lib/config', '.
                 if (!seleccion.exito) {
                     log.error({
                         title: seleccion.codigo,
-                        details: 'Equipo: ' + equipo.id + ' | Búsqueda: ' + (equipo.idBusqueda || '(vacía)') + ' | Detalle: ' + (seleccion.detalle || '')
+                        details: 'Equipo: ' + equipo.id + ' | Búsqueda: ' + (equipo.idBusqueda || '(vacía)') +
+                            ' | Usuario: ' + runtime.getCurrentUser().id + ' | Rol: ' + runtime.getCurrentUser().role +
+                            ' | Detalle: ' + (seleccion.detalle || '')
                     });
                     errores.push(crearError(seleccion.codigo, { equipo: seleccion.nombreEquipo }));
                 } else {
