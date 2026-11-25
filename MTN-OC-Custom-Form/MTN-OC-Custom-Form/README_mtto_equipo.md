@@ -2,11 +2,13 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.11, 2026-11-24 |
+| Versión | 1.12, 2026-11-25 |
 | Diseño de origen | `planes/2026-11-12_mtto-equipo-oc_prompt_v1.md` |
 | Plan de ejecución | `planes/2026-11-13_mtto-equipo-oc_plan-ejecucion_v4.md`; cambios en `..._v5.md`, `..._v6.md`, `..._v8.md`, `..._v9.md` y `..._v10.md` (vigente) |
 | Tipo de proyecto | SDF, personalización de cuenta |
 | Estado del despliegue al instalar | Pruebas |
+| Estado actual | Producción, Liberado. Aceptación con rol y usuario de compras aprobada el 2026-11-25 (sección 6) |
+| Mapa para IA | `AGENTS.md` en la raíz del repositorio: leer primero, antes que este archivo |
 
 ## 1. Propósito
 
@@ -39,7 +41,7 @@ Flujo al guardar: User Event → reglas y `datos.prepararSeleccion` → `N/searc
 
 | Objeto | ID | Configuración |
 |---|---|---|
-| Tipo de registro | `customrecord_sads_mtn_equipo` | "Equipo de transporte"; Nombre e Inactivo estándar; tipo de acceso `NONENEEDED` ("No se necesitan permisos para los roles internos"), igual que producción desde 2026-11-24. Con `CUSTRECORDENTRYPERM` el rol de compras recibía MSG-05. Pendiente: si un rol de captura puede editar equipos (prueba P-14), cambiar a `USEPERMISSIONLIST` con los roles de captura en Ver (riesgo R-24) |
+| Tipo de registro | `customrecord_sads_mtn_equipo` | "Equipo de transporte"; Nombre e Inactivo estándar; tipo de acceso `NONENEEDED` ("No se necesitan permisos para los roles internos"), igual que producción desde 2026-11-24. Con `CUSTRECORDENTRYPERM` el rol de compras recibía MSG-05. Verificado el 2026-11-25 (C-11): el rol de compras ve el registro Equipo y no puede editarlo (R-24) |
 | Campo del registro | `custrecord_sads_mtn_eq_busqueda` | Texto libre, obligatorio; ID de script de la búsqueda |
 | Campo del registro | `custrecord_sads_mtn_eq_subsidiaria` | Lista/registro Subsidiaria, obligatorio |
 | Campo de cabecera | `custbody_sads_mtn_equipo` | Lista/registro Equipo; aplica a compras; no obligatorio a nivel de campo; filtrado por subsidiaria de la transacción |
@@ -265,6 +267,16 @@ Durante las pruebas, la bitácora de los despliegues va en Auditoría; para ver 
 
 Si POC-1, POC-2 o POC-3 fallan, la solución no avanza a producción.
 
+### 6.1 Aceptación en producción (2026-11-25)
+
+| Dato | Valor |
+|---|---|
+| Protocolo | `planes/2026-11-24_mtto-equipo-oc_pruebas-rol-compras_v1.md`, casos C-01 a C-12 |
+| Ejecutó | Empleado con rol de compras, con el usuario del proyecto presente |
+| Resultado | Exitoso, según el reporte del usuario. No se registró el resultado de cada caso |
+| C-11 | El rol de compras ve el registro "Equipo de transporte" y no puede editarlo |
+| Antecedente | Con el usuario propietario, el selector y el borrado de líneas se corrigieron el 2026-11-24 al subir el Client Script entre los primeros 10 de Registros con script (R-23) |
+
 ## 7. Mensajes, códigos y diagnóstico
 
 | Código | Cuándo | Mensaje | Bitácora en servidor |
@@ -379,7 +391,7 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | R-19 | Permisos de búsqueda o de registro insuficientes para el rol que abre la OC | `search.load` y `lookupFields` corren con el rol del usuario | Selector vacío y MSG-05 | Registro en nivel Error con usuario, rol y detalle; sección 5.5 |
 | R-21 | Función Client SuiteScript desactivada, o despliegue de cliente sin audiencia para el usuario (descartado en producción el 2026-11-24; la causa fue R-23) | `manifest.xml` no declara `CLIENTSUITESCRIPT` (I-08); SDF no lo exige | El selector no se llena al elegir equipo y el cambio de equipo no borra líneas; sin aviso por línea | Sección 5.7; el servidor sigue validando al guardar |
 | R-23 | Más de 10 scripts de cliente en Orden de compra. Confirmado en producción el 2026-11-24: al subir el script a los primeros 10 se corrigieron el llenado del selector y el borrado de líneas | Límite de 10 scripts de cliente por registro (ayuda de Oracle, Registros con script) | El Client Script no corre aunque esté liberado; un SuiteApp o script nuevo puede volver a empujarlo fuera | Sección 5.7; revisar la posición después de cada instalación o actualización de SuiteApps |
-| R-24 | Tipo de acceso "No se necesitan permisos" en el registro Equipo | Todos los roles internos acceden al registro | Un usuario de captura podría cambiar la búsqueda o la subsidiaria de un equipo y ampliar el listado permitido | Prueba P-14; si puede editar, `USEPERMISSIONLIST` con roles de captura en Ver |
+| R-24 | Tipo de acceso "No se necesitan permisos" en el registro Equipo | Todos los roles internos acceden al registro | Un usuario de captura podría cambiar la búsqueda o la subsidiaria de un equipo y ampliar el listado permitido | Verificado el 2026-11-25 (C-11): el rol de compras solo ve. Revisar cualquier rol de captura nuevo; si puede editar, `USEPERMISSIONLIST` con roles de captura en Ver |
 | R-22 | Rol de captura sin permiso sobre el registro Equipo o sin la subsidiaria de los artículos | `lookupFields` y `search.load` corren con el rol del usuario, también en `beforeSubmit` | MSG-05 en pantalla y rechazo al guardar cualquier OC con equipo | Sección 5.5; detalle del error en bitácora y consola |
 | R-20 | Una búsqueda que no sea de artículos se acepta sin aviso | D-S: sin validación de tipo | Sus IDs llenarían el selector y el conjunto permitido; un ID que coincida con un artículo real permitiría comprarlo | Contrato de búsqueda (sección 5.3); revisar cada búsqueda nueva antes de asignarla a un equipo |
 
@@ -404,5 +416,6 @@ Retirado en la versión 1.3: la columna auxiliar de la sublista, la línea tempo
 | S-18 | `items` es el ID de la pestaña Artículos de la OC y admite campos de script como contenedor | SB-16 |
 | S-19 | `require` con la ruta absoluta del Client Script resuelve el módulo desde el HTML del botón | Verificado en sandbox (2026-11-13): la consola registró `entrada agregarArticuloSeleccionado` |
 | S-20 | Las búsquedas de los equipos solo devuelven artículos | Responsabilidad del administrador (D-S) |
+| S-21 | El límite de 10 scripts de cliente por registro aplica en producción y explica la falla del 2026-11-24 | Verificado por efecto: la falla desapareció al reordenar los despliegues. Oracle no documenta cuáles 10 corren al excederlo; se infiere que los primeros |
 
 Fuentes: prompt v1 y planes de ejecución en `planes/`; documentación de Oracle de `N/search`, `N/currentRecord` (`Field.insertSelectOption`, `Field.removeSelectOption`, `currentRecord.get`) y `N/ui/serverWidget` (`Form.addField`, `Field.addSelectOption`, `Field.updateLayoutType`).
